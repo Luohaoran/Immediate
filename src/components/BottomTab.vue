@@ -1,6 +1,6 @@
 <template>
     <div class="bottom-tab">
-        <div class="tab-item" @click="switchTo('/Betting')">
+        <div class="tab-item" @click="switchTo('/')">
             <img :src="'/' === $route.path ? tabBarImgArr[0].selected : tabBarImgArr[0].normal" alt="游戏大厅">
             <span :class="{on: '/' === $route.path}">投注</span>
         </div>
@@ -8,7 +8,7 @@
             <img :src="'/Service' === $route.path ? tabBarImgArr[1].selected : tabBarImgArr[1].normal" alt="开奖中心">
             <span :class="{on: '/Service' === $route.path}">客服</span>
         </div>
-        <div class="tab-item" @click="switchTo('/Home/search')">
+        <div class="tab-item" @click="switchTo('/Finance')">
             <img :src="'/Finance' === $route.path ? tabBarImgArr[2].selected : tabBarImgArr[2].normal" alt="投注查询">
             <span :class="{on: '/Finance' === $route.path}">财务</span>
         </div>

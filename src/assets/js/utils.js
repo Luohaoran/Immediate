@@ -1,7 +1,9 @@
-
-
+import { Toast } from 'vant';
 
 export default {
+    Msg(text){
+        Toast(text);
+    },
     debounce(fn, delay) {  //防抖
         var timer;
         return function () {

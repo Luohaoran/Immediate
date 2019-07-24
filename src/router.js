@@ -9,21 +9,41 @@ export default new Router({
             path: '/',
             name: 'Betting',
             component:()=>import('@/views/Betting') ,
+            meta: {
+                title: '投注',
+            }
         },
         {
-            path: '/',
+            path: '/Service',
             name: 'Service',
             component: ()=>import('@/views/Service'),
+            meta: {
+                title: '客服',
+            }
         },
         {
-            path: '/',
+            path: '/My',
             name: 'My',
             component:()=>import('@/views/My'),
+            meta: {
+                title: '个人中心',
+            }
         },
         {
-            path: '/',
+            path: '/Finance',
             name: 'Finance',
             component: ()=>import('@/views/Finance'),
+            meta: {
+                title: '充值',
+            }
         },
+        {
+            path: '/AddBank',
+            name: 'AddBank',
+            component: ()=>import('@/views/AddBank'),
+            meta: {
+                title: '添加银行卡',
+            }
+        }
     ]
 })
