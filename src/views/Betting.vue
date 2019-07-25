@@ -166,6 +166,8 @@
 
             .time {
                 color: rgb(158, 158, 158);
+                width: 100%;
+                text-align: center;
             }
 
             .big-box {

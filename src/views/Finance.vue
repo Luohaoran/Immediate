@@ -231,7 +231,7 @@
 
         .dingdan {
             margin-top: 160px;
-
+            text-align: center;
             button {
                 background: none;
                 margin-bottom: 20px;

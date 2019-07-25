@@ -20,7 +20,7 @@
                     </div>
                 </div>
             </div>
-            <div class="add-bank">
+            <router-link tag="div" to="/AddBankSon" class="add-bank">
                 <div class="left">
                     <div class="add-img">
                         <img src="../assets/img/add_bank.png" alt="">
@@ -32,7 +32,7 @@
                 <div class="right">
                     <img src="../assets/img/bank_right.png" alt="">
                 </div>
-            </div>
+            </router-link>
         </div>
 
     </div>

@@ -7,7 +7,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'Betting',
+            name: '/',
             component:()=>import('@/views/Betting') ,
             meta: {
                 title: '投注',
@@ -15,7 +15,7 @@ export default new Router({
         },
         {
             path: '/Service',
-            name: 'Service',
+            name: '/Service',
             component: ()=>import('@/views/Service'),
             meta: {
                 title: '客服',
@@ -23,7 +23,7 @@ export default new Router({
         },
         {
             path: '/My',
-            name: 'My',
+            name: '/My',
             component:()=>import('@/views/My'),
             meta: {
                 title: '个人中心',
@@ -31,7 +31,7 @@ export default new Router({
         },
         {
             path: '/Finance',
-            name: 'Finance',
+            name: '/Finance',
             component: ()=>import('@/views/Finance'),
             meta: {
                 title: '充值',
@@ -39,10 +39,42 @@ export default new Router({
         },
         {
             path: '/AddBank',
-            name: 'AddBank',
+            name: '/AddBank',
             component: ()=>import('@/views/AddBank'),
             meta: {
+                title: '绑定银行卡',
+            }
+        },
+        {
+            path: '/AddBankSon',
+            name: '/AddBankSon',
+            component: ()=>import('@/views/AddBankSon'),
+            meta: {
                 title: '添加银行卡',
+            }
+        },
+        {
+            path: '/Trend',
+            name: '/Trend',
+            component: ()=>import('@/views/Trend'),
+            meta: {
+                title: '我的推广',
+            }
+        },
+        {
+            path: '/Recharge_record',
+            name: '/Recharge_record',
+            component: ()=>import('@/views/Recharge_record'),
+            meta: {
+                title: '充值记录',
+            }
+        },
+        {
+            path: '/Put_record',
+            name: '/Put_record',
+            component: ()=>import('@/views/Put_record'),
+            meta: {
+                title: '提现记录',
             }
         }
     ]

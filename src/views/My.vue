@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="item-1">
-               <div class="item-cell" @click="goAddBank()">
+               <div class="item-cell" @click="go('/AddBank')">
                    <div class="left">
                        <div class="img">
                            <img src="../assets/img/item_1_1.png" alt="">
@@ -49,8 +49,11 @@
                    </div>
                </div>
             </div>
-            <div class="item-2">
-                <div class="item-cell" v-for="(item,index) in itemList" :key="index">
+            <div class="item-2" >
+                <div class="item-cell"
+                     @click="go(item.url)"
+                     v-for="(item,index) in itemList"
+                     :key="index">
                     <div class="left">
                         <div class="img">
                             <img :src="item.img" alt="">
@@ -99,19 +102,24 @@
                 itemList:[
                     {
                         text:'我的推广',
-                        img:require('../assets/img/item_2_1.png')
+                        img:require('../assets/img/item_2_1.png'),
+                        url:'/Trend'
                     },
                     {
                         text:'充值记录',
-                        img:require('../assets/img/item_2_2.png')
+                        img:require('../assets/img/item_2_2.png'),
+                        url:'/Recharge_record'
                     },
                     {
                         text:'提现记录',
-                        img:require('../assets/img/item_2_3.png')
+                        img:require('../assets/img/item_2_3.png'),
+                        url:'/Put_record'
+
                     },
                     {
                         text:'流水记录',
-                        img:require('../assets/img/item_2_4.png')
+                        img:require('../assets/img/item_2_4.png'),
+                        url:'/'
                     },
                 ]
             }
@@ -131,9 +139,12 @@
 
         },
         methods: {
-            goAddBank(){
-                this.$router.push('/AddBank')
-            }
+            go(url){
+                this.$router.push(url)
+            },
+            // goTrend(){
+
+            // }
         },
 
     }
@@ -188,10 +199,12 @@
             }
 
             .bottom {
-                margin-top: 60px;
+
                 width: 90%;
+                margin: 0 auto;
+                margin-top: 1.875rem;
                 display: flex;
-                justify-content: space-around;
+                justify-content: space-between;
 
                 button {
                     height: 40*2px;
