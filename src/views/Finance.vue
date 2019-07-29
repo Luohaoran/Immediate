@@ -246,9 +246,9 @@
 
         .type-check {
             margin: 0 auto;
-            width: 80%;
+            width: 85%;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             margin-top: 100px;
 
             button {

@@ -13,14 +13,20 @@
                         <van-list
                                 v-model="loading"
                                 :finished="finished"
+                                finished-text="没有更多"
                                 @load="onLoad"
                                 :offset="10"
                         >
-                            <div class="body-item" v-for="n in count " :key="n">
-                                <div>{{recordList.jine}}</div>
-                                <div>{{recordList.shenqing_time}}</div>
-                                <div>{{recordList.daozhang_tiem}}</div>
-                            </div>
+                            <template v-for="(item,index) in  recordList">
+                                <div class="body-item"
+                                     v-for="(jetm,jndex) in (item.length>0)?(item):(null)"
+                                     :key="jndex+'a'+index">
+                                    <div>{{jetm.money}}</div>
+                                    <div>{{jetm.create_time.split(' ')[0]}}</div>
+                                    <div>{{jetm.hk_at.split(' ')[0]}}</div>
+                                </div>
+                            </template>
+
                         </van-list>
                     </van-pull-refresh>
                 </div>
@@ -37,6 +43,7 @@
         components: {Top},
         data() {
             return {
+                current_page: '',
                 count: 5,
                 isLoading: false,
                 loading: false,   //是否处于加载状态
@@ -50,8 +57,6 @@
 
             }
         },
-
-
         beforeRouteEnter(to, from, next) {
             next()
         },
@@ -59,25 +64,45 @@
             next()
         },
         created() {
-
+            this.getRecharge(0, 1);
         },
         mounted() {
         },
         methods: {
+            getRecharge(page, type) {
+                this.$api.recharge({
+                    page: page+1
+                }).then(res => {
+                    if (res.error_code === 1) {
+                        if (type === 1) {
+                            this.recordList = [];
+                            this.recordList.push(res.result.data);
+                            this.finished = false
+                        } else {
+                            this.recordList.push(res.result.data);
+                        }
+                        this.current_page = res.result.current_page;
+                        if (!res.result.has_more) {
+                            this.finished = true
+                        }
+                    } else {
+                        this.$utils.Msg(res.msg);
+                    }
+                })
+            },
             onRefresh() {
                 setTimeout(() => {
                     this.$toast('刷新成功');
                     this.isLoading = false;
-                    this.count++;
+                    this.getRecharge(0,1)
                 }, 500);
             },
             onLoad() {      //上拉加载
                 setTimeout(() => {
-                    this.count++;
-                    this.loading = false;
-                    if (this.count >= 30) {
-                        this.finished = true;
+                    if (!this.finished){
+                        this.getRecharge(this.current_page,2);
                     }
+                    this.loading = false;
                 }, 2000);
             },
         },
@@ -101,6 +126,10 @@
                 display: flex;
                 justify-content: space-around;
                 align-items: center;
+                div{
+                    text-align: center;
+                    width: 33%;
+                }
             }
 
             .body-box {
@@ -115,6 +144,11 @@
                     justify-content: space-around;
                     align-items: center;
                     border-bottom: 1px solid #999999;
+                    div{
+                        text-align: center;
+
+                        width: 33%;
+                    }
                 }
             }
         }

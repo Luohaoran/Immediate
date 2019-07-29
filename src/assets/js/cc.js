@@ -28,6 +28,18 @@ function getSession(key) {
         return sessionStorage.getItem(key);
     }
 }
+function setLocal(key,val) {
+    localStorage.setItem(key,JSON.stringify(val))
+}
+function getLocal(key) {
+    try {
+        return JSON.parse(localStorage.getItem(key));
+    } catch (err) {
+        return localStorage.getItem(key);
+    }
+
+}
+
 export default {
     setSession:setSession,
     getSession:getSession,
@@ -37,4 +49,6 @@ export default {
     setCookie: setCookie,
     getCookie: getCookie,
     delCookie: delCookie,
+    getLocal:getLocal,
+    setLocal:setLocal,
 }

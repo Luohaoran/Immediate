@@ -4,23 +4,23 @@
             <div class="my-box">
                 <div class="top">
                     <div class="my-img">
-                        <img src="../assets/img/my-img.png" alt="">
+                        <img :src="user_img" alt="">
                     </div>
                     <div class="my-message">
                         <div class="user-name">
                             <div class="title">昵称</div>
                             ：
-                            <div class="text">天长地久</div>
+                            <div class="text">{{username}}</div>
                         </div>
                         <div class="user-id">
                             <div class="title">游戏ID</div>
                             ：
-                            <div class="text">688565</div>
+                            <div class="text">{{id}}</div>
                         </div>
                         <div class="user-jine">
                             <div class="title">账户余额</div>
                             ：
-                            <div class="text">666元</div>
+                            <div class="text">{{money}}元</div>
                         </div>
 
                     </div>
@@ -69,7 +69,7 @@
 
             </div>
             <div class="item-3">
-                <div class="item-cell">
+                <div class="item-cell" @click="go('/Set')">
                     <div class="left">
                         <div class="img">
                             <img src="../assets/img/item_3_1.png" alt="">
@@ -99,6 +99,10 @@
         },
         data() {
             return {
+                user_img:'',
+                username:this.$store.state.username||'',
+                money:this.$store.state.money||'',
+                id:this.$store.state.id||'',
                 itemList:[
                     {
                         text:'我的推广',
@@ -119,7 +123,7 @@
                     {
                         text:'流水记录',
                         img:require('../assets/img/item_2_4.png'),
-                        url:'/'
+                        url:'/Bill_record'
                     },
                 ]
             }
@@ -133,6 +137,16 @@
             next()
         },
         created() {
+            this.$api.center().then(res=>{
+                if (res.error_code===1){
+                    this.user_img=res.result.face;
+                    this.$store.commit('setId',res.result.id);
+                    this.$store.commit('setUsername',res.result.username);
+                    this.$store.commit('setMoney',res.result.money);
+                } else {
+                    this.$utils.Msg(res.msg)
+                }
+            })
 
         },
         mounted() {
@@ -142,9 +156,6 @@
             go(url){
                 this.$router.push(url)
             },
-            // goTrend(){
-
-            // }
         },
 
     }
@@ -199,12 +210,11 @@
             }
 
             .bottom {
-
-                width: 90%;
+                width: 100%;
                 margin: 0 auto;
                 margin-top: 1.875rem;
                 display: flex;
-                justify-content: space-between;
+                justify-content: space-around;
 
                 button {
                     height: 40*2px;
@@ -233,15 +243,16 @@
                 justify-content: space-between;
                 align-items: center;
                 .left{
-                    width: 35%;
+                    width: 40%;
                     display: flex;
                     justify-content: space-around;
-                    align-items: center;
+                    /*align-items: center;*/
                     .img{
                         width: 30%;
                         margin-left: 10px;
                         img{
                             width: 60px;
+                            /*height: 60px;*/
                         }
                     }
                     .text{

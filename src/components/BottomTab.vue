@@ -54,8 +54,10 @@
 
 <style scoped lang="less">
     .bottom-tab {
+        position: fixed;
+        bottom: 0;
         width: 100%;
-        height: 8vh;
+        height: 120px;
         /*padding-top: 30px;*/
         display: flex;
         /*flex-wrap: nowrap;*/

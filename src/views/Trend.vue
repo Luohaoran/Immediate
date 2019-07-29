@@ -5,11 +5,11 @@
             <div class="header">
                 <div class="header-item">
                     <span>今日推广</span>
-                    <span>12人</span>
+                    <span>{{agentTodayCount}}人</span>
                 </div>
                 <div class="header-item">
                     <span>我的下级</span>
-                    <span>12人</span>
+                    <span>{{count}}人</span>
                 </div>
             </div>
             <div class="xiaji">下级列表</div>
@@ -21,9 +21,9 @@
                 </div>
                 <div class="body-box">
                     <div class="body-item" v-for="(item,index) in xiajiList" :key="index">
-                        <div>{{item.name}}</div>
-                        <div>{{item.tiem}}</div>
-                        <div>{{item.last_time}}</div>
+                        <div>{{item.username}}</div>
+                        <div>{{item.create_time.split(' ')[0]}}</div>
+                        <div>{{item.last_login_at.split(' ')[0]}}</div>
                     </div>
                 </div>
             </div>
@@ -42,6 +42,8 @@
         },
         data() {
             return {
+                count:'',
+                agentTodayCount:'',
                 xiajiList: [
                     {
                         name: '你的眼泪',
@@ -70,6 +72,15 @@
             next()
         },
         created() {
+            this.$api.spread().then(res=>{
+                if (res.error_code===1){
+                    this.count=res.result.count;
+                    this.agentTodayCount=res.result.agentTodayCount;
+                    this.xiajiList=res.result.agent;
+                }else {
+                    this.$utils.Msg(res.msg);
+                }
+            })
 
         },
         mounted() {
@@ -125,6 +136,10 @@
                 display: flex;
                 justify-content: space-around;
                 align-items: center;
+                div{
+                    width: 33%;
+                    text-align: center;
+                }
             }
             .body-box {
                 width: 100%;
@@ -135,6 +150,10 @@
                     justify-content: space-around;
                     align-items: center;
                     border-bottom: 1px solid #999999;
+                    div{
+                        text-align: center;
+                        width: 33%;
+                    }
                 }
             }
         }

@@ -8,15 +8,16 @@
                         <div class="bank-img"></div>
                         <div class="bank-name-content">
                             <div class="bank-name">
-                                {{item.name}}
+                                {{item.bank_name}}
                             </div>
                             <div class="bank-type">
-                                {{item.type}}
+                                {{item.bank_address}}
                             </div>
                         </div>
+                        <div class="bank-deldte">删除</div>
                     </div>
                     <div class="bank-num">
-                        {{item.num}}
+                        {{item.bank_card}}
                     </div>
                 </div>
             </div>
@@ -74,7 +75,11 @@
             next()
         },
         created() {
-
+            this.$api.bank().then(res=>{
+               if (res.error_code===1){
+                   this.bankList=res.result;
+               }
+            })
         },
         mounted() {
 
