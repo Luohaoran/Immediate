@@ -172,11 +172,10 @@
                 }
 
                 img {
-                    width: 30px;
-                    height: 35px;
+                    width: 40px;
+                    height: 40px;
                 }
             }
-
             .on {
                 background-color: rgb(237, 237, 237);
             }

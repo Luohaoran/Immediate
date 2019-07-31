@@ -21,12 +21,12 @@
                 <div class="input">
                     <input type="text" placeholder="请输入充值金额" v-model="jine">
                 </div>
-                <div class="okBtn">
+                <div class="okBtn" @click="okBtn()">
                     确认
                 </div>
                 <div class="dingdan">
                     <button class="url" data-clipboard-action="copy" :data-clipboard-text="dingdanNum">
-                        订单号:2222222222222222222222 <span @click="copy()">复制</span></button>
+                        订单号:{{dingdanNum}} <span @click="copy()">复制</span></button>
                     <div class="tips">
                         <img src="../assets/img/tips_img.png" alt="">
                         <span>提示:充值时请您转账备注好订单号，方便账户即时到账</span>
@@ -36,7 +36,7 @@
             <div class="saoma" v-show="type===2">
                 <div class="code">
                     <div class="qq-img">
-                        <img src="../assets/img/wx_img.png" alt="">
+                        <img :src="pay_src" alt="">
                     </div>
                 </div>
                 <div class="tips">
@@ -57,11 +57,13 @@
                 </button>
             </div>
         </div>
+        <van-popup v-model="popupVisible"><img :src="img_src" alt=""></van-popup>
         <bottom-tab/>
     </div>
 </template>
 
 <script>
+    import {url} from '../request/api/base'
     import BottomTab from '../components/BottomTab'
 
 
@@ -72,12 +74,15 @@
         },
         data() {
             return {
+                popupVisible:false,
                 selectVisible: false,
                 checkValue: '微信',
                 selectitem: ['微信', '支付宝'],
                 jine: '',
-                dingdanNum: '222222222222222222222222222',
+                dingdanNum: '',
                 type: 1,
+                pay_src:'',
+                img_src:'',
             }
         },
 
@@ -89,12 +94,46 @@
             next()
         },
         created() {
-
+            this.getRe_d();
+            this.getPay_qrCode();
         },
         mounted() {
 
         },
         methods: {
+            okBtn(){
+                if (this.jine===''){
+                    this.$utils.Msg('请输入充值金额')
+                } else {
+                    let obj={
+                        payment_type:(this.checkValue==='微信')?(1):(2),
+                        bill_no:this.dingdanNum,
+                        money:this.jine,
+                        user_id:this.$store.state.id
+                    };
+                    this.$api.postRe_d(obj).then(res=>{
+                        if (res.error_code===1){
+                            this.popupVisible=true;
+                            this.img_src=url+'/'+res.result.qrcode
+                        }
+                    })
+
+                }
+            },
+            getPay_qrCode(){
+              this.$api.pay_qrCode().then(res=>{
+                  if (res.error_code===1){
+                      this.pay_src=url+'/'+res.result;
+                  }
+              })
+            },
+            getRe_d(){
+              this.$api.re_d().then(res=>{
+                 if (res.error_code===1){
+                     this.dingdanNum=res.result.bill_no
+                 }
+              })
+            },
             copy() {
                 let _this = this;
                 let clipboard = new _this.clipboard(".url");

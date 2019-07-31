@@ -29,6 +29,7 @@
 </template>
 
 <script>
+
     import BottomTab from '../components/BottomTab'
 
     export default {
@@ -48,12 +49,20 @@
             next()
         },
         created() {
-
+            this.getCus_qrCode();
         },
         mounted() {
 
         },
-        methods: {},
+        methods: {
+            getCus_qrCode(){
+                this.$api.cus_qrCode().then(res=>{
+                    if (res.error_code===1){
+                        // console.log(res);
+                    }
+                })
+            }
+        },
 
     }
 
@@ -82,16 +91,16 @@
             margin-top: 50px;
             width: 100%;
             .qq-img{
-                width: 220*2px;
+                width: 200*2px;
                 margin: 0 auto;
-                height: 220*2px;
+                height: 200*2px;
                 display: flex;
                 align-items: center;
                 justify-content: space-around;
                 background:rgb(231,231,231) ;
                 img{
-                    width: 200*2px;
-                    height: 200*2px;
+                    width: 180*2px;
+                    height: 180*2px;
                 }
             }
         }

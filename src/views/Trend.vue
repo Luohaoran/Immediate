@@ -20,10 +20,10 @@
                     <div>最后登陆时间</div>
                 </div>
                 <div class="body-box">
-                    <div class="body-item" v-for="(item,index) in xiajiList" :key="index">
+                    <div class="body-item" v-for="(item,index) in (xiajiList.length>0)?(xiajiList):(null)" :key="index">
                         <div>{{item.username}}</div>
-                        <div>{{item.create_time.split(' ')[0]}}</div>
-                        <div>{{item.last_login_at.split(' ')[0]}}</div>
+                        <div>{{item.create_time}}</div>
+                        <div>{{item.last_login_at}}</div>
                     </div>
                 </div>
             </div>
@@ -76,6 +76,10 @@
                 if (res.error_code===1){
                     this.count=res.result.count;
                     this.agentTodayCount=res.result.agentTodayCount;
+                    res.result.agent.forEach((item,i)=>{
+                        item.create_time=item.create_time.split(' ')[0];
+                        item.last_login_at=item.last_login_at.split(' ')[0]
+                    });
                     this.xiajiList=res.result.agent;
                 }else {
                     this.$utils.Msg(res.msg);

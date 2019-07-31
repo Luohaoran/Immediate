@@ -101,5 +101,13 @@ export default new Router({
                 title: '红包记录',
             }
         },
+        {
+            path: '/Put',
+            name: '/Put',
+            component: () => import('@/views/Put'),
+            meta: {
+                title: '提现',
+            }
+        },
     ]
 })

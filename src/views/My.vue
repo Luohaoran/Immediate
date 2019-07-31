@@ -27,11 +27,9 @@
                 </div>
                 <div class="bottom">
                     <button class="on"
-                    >人工充值
+                    >充值
                     </button>
-                    <button
-                    >扫码充值
-                    </button>
+                    <button @click="goPut()">提现 </button>
                 </div>
             </div>
             <div class="item-1">
@@ -153,6 +151,9 @@
 
         },
         methods: {
+            goPut(){
+              this.$router.push('/Put')
+            },
             go(url){
                 this.$router.push(url)
             },

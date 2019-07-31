@@ -6,7 +6,7 @@
                 <div class="body-header">
                     <div>金额</div>
                     <div>申请时间</div>
-                    <div>到账时间</div>
+                    <div>到账时间</div>Trend
                 </div>
                 <div class="body-box">
                     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
@@ -22,8 +22,8 @@
                                      v-for="(jetm,jndex) in (item.length>0)?(item):(null)"
                                      :key="jndex+'a'+index">
                                     <div>{{jetm.money}}</div>
-                                    <div>{{jetm.create_time.split(' ')[0]}}</div>
-                                    <div>{{jetm.hk_at.split(' ')[0]}}</div>
+                                    <div>{{jetm.create_time}}</div>
+                                    <div>{{jetm.hk_at}}</div>
                                 </div>
                             </template>
 
@@ -74,6 +74,10 @@
                     page: page+1
                 }).then(res => {
                     if (res.error_code === 1) {
+                        res.result.data.forEach((item,i)=>{
+                           item.create_time=item.create_time.split(' ')[0];
+                           item.hk_at=item.hk_at.split(' ')[0]
+                        });
                         if (type === 1) {
                             this.recordList = [];
                             this.recordList.push(res.result.data);

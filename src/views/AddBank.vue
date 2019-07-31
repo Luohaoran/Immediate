@@ -14,7 +14,7 @@
                                 {{item.bank_address}}
                             </div>
                         </div>
-                        <div class="bank-deldte">删除</div>
+                        <div class="bank-deldte" @click="delBank(item.id)">删除</div>
                     </div>
                     <div class="bank-num">
                         {{item.bank_card}}
@@ -41,31 +41,16 @@
 
 <script>
     import Top from '../components/Top'
+    import {Dialog} from 'vant';
 
     export default {
         name: "AddBank",
         components: {
-            Top
+            Top,
         },
         data() {
             return {
-                bankList: [
-                    {
-                        name: '建设银行卡',
-                        type: '储蓄卡',
-                        num: '**** **** **** 6666'
-                    },
-                    {
-                        name: '建设银行卡',
-                        type: '储蓄卡',
-                        num: '**** **** **** 6666'
-                    },
-                    {
-                        name: '建设银行卡',
-                        type: '储蓄卡',
-                        num: '**** **** **** 6666'
-                    },
-                ]
+                bankList: []
             }
         },
         beforeRouteEnter(to, from, next) {
@@ -75,16 +60,46 @@
             next()
         },
         created() {
-            this.$api.bank().then(res=>{
-               if (res.error_code===1){
-                   this.bankList=res.result;
-               }
-            })
+            this.getBank();
         },
         mounted() {
 
         },
-        methods: {},
+        methods: {
+            getBank() {
+                this.$api.getBank().then(res => {
+                    if (res.error_code === 1) {
+                        if (res.result.length > 0) {
+                            res.result.forEach((item) => {
+                                item.bank_card = '**** **** ****' + item.bank_card.substring(item.bank_card.length - 4)
+                            });
+                            this.bankList = res.result;
+                        }
+                    }
+                })
+            },
+            delBank(id) {
+                // console.log(Dialog);
+                Dialog.confirm({
+                    title: '提示',
+                    message: '确认删除'
+                }).then(() => {
+                    this.$api.deleteBank(
+                        {
+                            id: id
+                        }
+                    ).then(res => {
+                        if (res.error_code === 1) {
+                            this.$utils.Msg('删除成功');
+                            this.getBank();
+                        }
+                    })
+                }).catch(() => {
+                    // on cancel
+                });
+
+            }
+        },
 
     }
 
@@ -170,20 +185,23 @@
                 justify-content: space-around;
                 align-items: center;
                 color: white;
+
                 .add-img {
                     width: 40px;
                     height: 40px;
-                    img{
+
+                    img {
                         width: 40px;
                     }
                 }
+
                 .add-text {
 
                 }
             }
 
             .right {
-                img{
+                img {
                     width: 30px;
                 }
             }

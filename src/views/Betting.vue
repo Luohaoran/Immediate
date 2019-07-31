@@ -53,13 +53,14 @@
                     <img src="../assets/img/yuyin.png" alt="">
                 </div>
                 <div class="input-box">
-                    <input v-model="text">
+                    <input v-model="text" @focus="openEmojis()">
                 </div>
                 <div class="emoji" @click="openEmoji()">
                     <img src="../assets/img/emoji.png" alt="">
                 </div>
                 <div class="add">
-                    <img src="../assets/img/add.png" alt="">
+<!--                    发送-->
+                    <img src="../assets/img/send.png" alt="">
                 </div>
             </div>
             <div class="two">
@@ -98,7 +99,7 @@
                 hbTouxiang: '',
                 emoji: false,
                 hbName: '',
-                pack: packData.slice(0,50),
+                pack: packData.slice(0, 50),
                 message: [
                     {
                         username: '小红',
@@ -164,7 +165,8 @@
                     }
 
                 ],
-                hbVisible: false
+                hbVisible: false,
+                websock:null,
             }
         },
         beforeRouteEnter(to, from, next) {
@@ -174,7 +176,11 @@
             next()
         },
         created() {
-
+            //页面刚进入时开启长连接
+            // this.initWebSocket()
+        },
+        destroyed(){
+            // this.websocketclose();
         },
         mounted() {
             $('.content').scrollTop($('.content').height());
@@ -182,6 +188,31 @@
             $('#Categories').hide();
         },
         methods: {
+            initWebSocket(){ //初始化weosocket
+                const wsuri = '';//ws地址
+                this.websock = new WebSocket(wsuri);
+                this.websocket.onopen = this.websocketonopen;
+                this.websocket.onerror = this.websocketonerror;
+                this.websock.onmessage = this.websocketonmessage;
+                this.websock.onclose = this.websocketclose;
+            },
+
+            websocketonopen() {
+                console.log("WebSocket连接成功");
+            },
+            websocketonerror(e) { //错误
+                console.log("WebSocket连接发生错误");
+            },
+            websocketonmessage(e){ //数据接收
+                const redata = JSON.parse(e.data);
+                // 接收数据
+            },
+            websocketsend(agentData){//数据发送
+                this.websock.send(agentData);
+            },
+            websocketclose(e){ //关闭
+                console.log("connection closed (" + e.code + ")");
+            },
             openHongbao(src, name) {
                 this.hbVisible = true;
                 this.hbTouxiang = src;
@@ -189,7 +220,6 @@
             },//第一次点开红包
             selectEmoji(emoji) {
                 this.text += (emoji.emoji);
-                console.log(emoji.emoji)
             },//点击emoji
             kaiHongbao() {
                 let _this = this;
@@ -204,29 +234,27 @@
                 });
             },//第二次点开红包
             openEmoji() {
+                this.emoji = !this.emoji;
                 var content = $('.content');
-
                 var show = () => {
                     $('.content').css('height', '55vh');
                     $('.input').css({
-                        'height':'300px',
-                        'padding-bottom':'30px',
+                        'height': '250px',
+                        'padding-bottom': '30px',
                     });
-                    $('.emoji-box').css('height', '300px');
+                    $('.emoji-box').css('height', '250px');
 
-                    this.emoji = !this.emoji;
                     content.scrollTop = content.height();
                 };
-                var hide=()=>{
+                var hide = () => {
                     $('.content').css('height', '85vh');
                     $('.emoji-box').css('height', '0px');
                     $('.input').css({
-                        'height':'50px',
-                        'padding-bottom':'0px',
+                        'height': '50px',
+                        'padding-bottom': '0px',
                     });
-                    this.emoji = !this.emoji;
-                };
 
+                };
                 if (!this.emoji) {
                     show();
                     setTimeout(function () {
@@ -238,15 +266,25 @@
                     hide()
                 }
             },//打开表情选择框
+            openEmojis(){
+                $('.content').css('height', '85vh');
+                $('.emoji-box').css('height', '0px');
+                $('.input').css({
+                    'height': '50px',
+                    'padding-bottom': '0px',
+                });
+                this.emoji = false;
+            }
         },
     }
 
 </script>
 
 <style scoped lang="less">
-    .Betting{
+    .Betting {
         margin-bottom: 95px;
     }
+
     .content {
         width: 94%;
         padding: 0 3%;
@@ -511,23 +549,38 @@
         background-color: rgb(246, 246, 246);
         border-bottom: 1px solid #a3a3a3;
         transition: all .1s linear;
-        .one{
+
+        .one {
             width: 100%;
             height: 100px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
+
             .yuyin, .emoji, .add {
+                width: 50px;
+                height: 50px;
                 img {
                     width: 50px;
                     height: 50px;
                 }
             }
-
+            /*.add{*/
+            /*    display: flex;*/
+            /*    justify-content: center;*/
+            /*    align-items: center;*/
+            /*    width: 100px;*/
+            /*    height: 50px;*/
+            /*    border-radius: 30px;*/
+            /*    border: 1px solid black;*/
+            /*    font-size: 28px;*/
+            /*    text-align: center;*/
+            /*}*/
             .input-box {
                 width: 70%;
                 height: 70%;
+
                 input {
                     border-radius: 10px;
                     width: 90%;
@@ -536,15 +589,16 @@
                 }
             }
         }
-        .two{
+
+        .two {
             width: 100%;
+            overflow: hidden;
+
             .emoji-box {
                 display: flex;
                 height: 0vh;
                 width: 100%;
-                overflow: hidden;
-
-
+                /*overflow: hidden;*/
             }
         }
 
@@ -552,13 +606,25 @@
 
 
 </style>
-<style>
+<style lang="less">
     .van-popup {
         background: none;
     }
 
     #EmojiPicker {
         width: 100% !important;
-        height: 40vh !important;
+        height: 200*2px !important;
+        overflow: scroll !important;
+
+        #Emojis {
+            .container-emoji {
+                overflow: hidden !important;
+                padding-bottom: 150px !important;
+            }
+        }
     }
+    #EmojiPicker::-webkit-scrollbar{
+        display: none;
+    }
+
 </style>

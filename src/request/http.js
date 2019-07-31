@@ -12,7 +12,7 @@ axios.interceptors.request.use(
     (config) => {
 // 在发送请求之前做些什么
         if (config.method === 'post') {
-            config.data = qs.stringify(config.data)
+            config.data = qs.stringify(config.data);
         }
         return config
     },
