@@ -178,6 +178,7 @@
             border-top: 1px solid #4c4c4c;
             border-bottom: 1px solid #4c4c4c;
 
+
             .left {
                 height: 100%;
                 width: 30%;

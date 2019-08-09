@@ -53,13 +53,13 @@
                     <img src="../assets/img/yuyin.png" alt="">
                 </div>
                 <div class="input-box">
-                    <input v-model="text" @focus="openEmojis()">
+                    <input v-model="text" ref="message" @focus="hide()" @keyup.enter="sendMessage()">
                 </div>
                 <div class="emoji" @click="openEmoji()">
                     <img src="../assets/img/emoji.png" alt="">
                 </div>
-                <div class="add">
-<!--                    发送-->
+                <div class="add" @click.stop="sendMessage()">
+                    <!--                    发送-->
                     <img src="../assets/img/send.png" alt="">
                 </div>
             </div>
@@ -78,7 +78,7 @@
     import BottomTab from '../components/BottomTab'
     import VEmojiPicker from 'v-emoji-picker';
     import packData from 'v-emoji-picker/data/emojis.json';
-
+    import cc from "../assets/js/cc";
     export default {
         //投注
         name: "Betting",
@@ -103,7 +103,7 @@
                 message: [
                     {
                         username: '小红',
-                        text: '你好啊',
+                        text: '你好啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
                         type: 1,
                         touxiang: require('../assets/img/touxiang.png'),
                     },
@@ -135,7 +135,7 @@
                     },
                     {
                         username: '小红',
-                        text: '你好啊',
+                        text: '你好啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
                         type: 3,
                         touxiang: require('../assets/img/touxiang.png'),
                     },
@@ -166,7 +166,12 @@
 
                 ],
                 hbVisible: false,
-                websock:null,
+                websock: null,
+                reconnectData: null,
+                lockReconnect: false,    //避免重复连接，因为onerror之后会立即触发 onclose
+                timeout: 10000,          //10s一次心跳检测
+                timeoutObj: null,
+                serverTimeoutObj: null,
             }
         },
         beforeRouteEnter(to, from, next) {
@@ -176,43 +181,88 @@
             next()
         },
         created() {
-            //页面刚进入时开启长连接
-            // this.initWebSocket()
+            // this.initWebSocket();
         },
-        destroyed(){
-            // this.websocketclose();
+        destroyed() {
+            // this.lockReconnect = true;
+            // this.websock.close()    ;               //离开路由之后断开websocket连接
+            // clearTimeout(this.reconnectData);      //离开清除 timeout
+            // clearTimeout(this.timeoutObj);         //离开清除 timeout
+            // clearTimeout(this.serverTimeoutObj);   //离开清除 timeout
         },
         mounted() {
-            $('.content').scrollTop($('.content').height());
+            this.topTop();
             $('#InputSearch').hide();//隐藏表情搜索框
             $('#Categories').hide();
         },
         methods: {
-            initWebSocket(){ //初始化weosocket
-                const wsuri = '';//ws地址
-                this.websock = new WebSocket(wsuri);
-                this.websocket.onopen = this.websocketonopen;
-                this.websocket.onerror = this.websocketonerror;
-                this.websock.onmessage = this.websocketonmessage;
-                this.websock.onclose = this.websocketclose;
-            },
-
+            initWebSocket() {
+                console.log('启动中');
+                let wsurl = '你的websockt url';
+                this.websock = new WebSocket(wsurl);
+                this.websock.onopen = this.websocketonopen;          //连接成功
+                this.websock.onmessage = this.websocketonmessage;    //广播成功
+                this.websock.onerror = this.websocketonerror;        //连接断开，失败
+                this.websock.onclose = this.websocketclose;          //连接关闭
+            },             //初始化weosocket
             websocketonopen() {
-                console.log("WebSocket连接成功");
-            },
-            websocketonerror(e) { //错误
-                console.log("WebSocket连接发生错误");
-            },
-            websocketonmessage(e){ //数据接收
-                const redata = JSON.parse(e.data);
-                // 接收数据
-            },
-            websocketsend(agentData){//数据发送
-                this.websock.send(agentData);
-            },
-            websocketclose(e){ //关闭
-                console.log("connection closed (" + e.code + ")");
-            },
+                console.log('连接成功');
+                this.heatBeat();
+            },           //连接成功
+            websocketonerror() {
+                console.log('连接失败');
+                this.reconnect();
+            },          //连接失败
+            websocketclose() {
+                console.log('断开连接');
+                this.reconnect();
+            },            //各种问题导致的 连接关闭
+            websocketonmessage(data) {
+                this.heatBeat();      //收到消息会刷新心跳检测，如果一直收到消息，就推迟心跳发送
+                let msgData = JSON.parse(data);
+            },    //数据接收
+            websocketsend(data) {
+                this.websock.send(JSON.stringify(data));
+            },         //数据发送
+            reconnect() {
+                if (this.lockReconnect) {  //这里很关键，因为连接失败之后之后会相继触发 连接关闭，不然会连接上两个 WebSocket
+                    return
+                }
+                this.lockReconnect = true;
+                this.reconnectData && clearTimeout(this.reconnectData);
+                this.reconnectData = setTimeout(() => {
+                    this.initWebSocket();
+                    this.lockReconnect = false;
+                }, 5000)
+            },                 //socket重连
+            heatBeat() {
+                this.timeoutObj && clearTimeout(this.timeoutObj);
+                this.serverTimeoutObj && clearTimeout(this.serverTimeoutObj);
+                this.timeoutObj = setTimeout(() => {
+                    this.websocketsend({type: '心跳检测'});   //根据后台要求发送
+                    this.serverTimeoutObj = setTimeout(() => {
+                        this.websock.close();       //如果  5秒之后我们没有收到 后台返回的心跳检测数据 断开socket，断开后会启动重连机制
+                    }, 5000);
+                }, this.timeout)
+            },                  //心跳检测
+
+
+            sendMessage() {
+                if (!this.emoji) {
+                    this.$refs.message.focus();
+                }
+                if (this.text !== '') {
+                    var obj = {
+                        username: '小红',
+                        text: this.text,
+                        type:1,
+                        touxiang: require('../assets/img/touxiang.png'),
+                    };
+                    this.message.push(obj);
+                    this.text = '';
+                    this.topTop();
+                }
+            },//发送消息
             openHongbao(src, name) {
                 this.hbVisible = true;
                 this.hbTouxiang = src;
@@ -233,48 +283,46 @@
                     })
                 });
             },//第二次点开红包
-            openEmoji() {
-                this.emoji = !this.emoji;
-                var content = $('.content');
-                var show = () => {
-                    $('.content').css('height', '55vh');
-                    $('.input').css({
-                        'height': '250px',
-                        'padding-bottom': '30px',
-                    });
-                    $('.emoji-box').css('height', '250px');
-
-                    content.scrollTop = content.height();
-                };
-                var hide = () => {
-                    $('.content').css('height', '85vh');
-                    $('.emoji-box').css('height', '0px');
-                    $('.input').css({
-                        'height': '50px',
-                        'padding-bottom': '0px',
-                    });
-
-                };
-                if (!this.emoji) {
-                    show();
-                    setTimeout(function () {
-                        $(document).click(function () {
-                            hide()
-                        });
-                    }, 50)
-                } else {
-                    hide()
-                }
-            },//打开表情选择框
-            openEmojis(){
+            topTop() {
+                setTimeout(function () {
+                    $('.content').scrollTop(10000);
+                });
+            },//滚动条定位
+            show() {
+                this.emoji = true;
+                $('.content').css('height', '55vh');
+                $('.input').css({
+                    'height': '250px',
+                    'padding-bottom': '30px',
+                });
+                $('.emoji-box').css('height', '250px');
+                setTimeout(function () {
+                    $('.content').scrollTop(10000);
+                }, 300);
+            },//显示
+            hide() {
+                this.emoji = false;
                 $('.content').css('height', '85vh');
                 $('.emoji-box').css('height', '0px');
                 $('.input').css({
                     'height': '50px',
                     'padding-bottom': '0px',
                 });
-                this.emoji = false;
-            }
+            },//隐藏
+            openEmoji() {
+                let _this = this;
+                if (!this.emoji) {
+                    this.show();
+                    this.topTop();
+                    setTimeout(function () {
+                        $(document).click(function () {
+                            _this.hide();
+                        });
+                    }, 50)
+                } else {
+                    this.hide()
+                }
+            },//打开表情选择框
         },
     }
 
@@ -561,11 +609,13 @@
             .yuyin, .emoji, .add {
                 width: 50px;
                 height: 50px;
+
                 img {
                     width: 50px;
                     height: 50px;
                 }
             }
+
             /*.add{*/
             /*    display: flex;*/
             /*    justify-content: center;*/
@@ -577,6 +627,7 @@
             /*    font-size: 28px;*/
             /*    text-align: center;*/
             /*}*/
+
             .input-box {
                 width: 70%;
                 height: 70%;
@@ -623,7 +674,8 @@
             }
         }
     }
-    #EmojiPicker::-webkit-scrollbar{
+
+    #EmojiPicker::-webkit-scrollbar {
         display: none;
     }
 

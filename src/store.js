@@ -10,6 +10,7 @@ export default new Vuex.Store({
     id:cc.getLocal('id')||'',
     username:cc.getLocal('username')||'',
     money:cc.getLocal('money')||'',
+    token:cc.getLocal(`token`)||``,
   },
   mutations: {
     setId(state,val){
@@ -21,6 +22,9 @@ export default new Vuex.Store({
     },
     setMoney(state,val){
       cc.setLocal('money',val)
+    },
+    setToken(state,val){
+      cc.setLocal(`token`,val)
     }
   },
   actions: {

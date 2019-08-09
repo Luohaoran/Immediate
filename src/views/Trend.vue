@@ -20,7 +20,7 @@
                     <div>最后登陆时间</div>
                 </div>
                 <div class="body-box">
-                    <div class="body-item" v-for="(item,index) in (xiajiList.length>0)?(xiajiList):(null)" :key="index">
+                    <div class="body-item" v-for="(item,index) in xiajiList.length>0?xiajiList:null" :key="index">
                         <div>{{item.username}}</div>
                         <div>{{item.create_time}}</div>
                         <div>{{item.last_login_at}}</div>

@@ -36,12 +36,15 @@
 </template>
 
 <script>
-    import Top from '../components/Top'
+    import Top from '../components/Top';
+    import { Dialog } from 'vant';
+
     export default {
         name: "Put",
         components: {Top},
         data() {
             return {
+                bill_no:'',//订单号
                 checkValue:'请选择银行卡号',
                 selectVisible:false,
                 money:this.$store.state.money,
@@ -63,7 +66,6 @@
         },
         created() {
             this.getDra_index()
-
         },
         mounted() {
 
@@ -73,6 +75,7 @@
               this.$api.dra_index().then(res=>{
                   if (res.error_code===1){
                       this.bankCard=res.result.bankCard;
+                      this.bill_no=res.result.bill_no;
                   }
               })
             },
@@ -84,7 +87,30 @@
                 this.selectVisible = !this.selectVisible
             },//下拉点击事件
             okBtn(){
+                let obj={
+                    bill_no:this.bill_no,
+                    money:this.jine,
+                    user_id:this.$store.state.id,
+                    bank_card:this.checkValue,
+                };
+                if (this.checkValue==='请选择银行卡号'){
+                  this.$utils.Msg('请选择银行卡号')
+                } else if (this.jine===''){
+                    this.$utils.Msg('请输入金额')
+                } else {
+                    this.$api.dra_send(obj).then(res=>{
+                        if (res.error_code===1){
+                            this.jine='';
+                            Dialog.alert({
+                                title: '提示',
+                                message: '申请提现成功'
+                            }).then(() => {
 
+                            });
+
+                        }
+                    })
+                }
             },
         },
 

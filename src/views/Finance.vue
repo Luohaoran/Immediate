@@ -48,12 +48,12 @@
                 <button
                         @click="typeClick(1)"
                         :class="(type===1)?('on'):('')"
-                >人工充值
+                >扫码充值
                 </button>
                 <button
                         @click="typeClick(2)"
                         :class="(type===2)?('on'):('')"
-                >扫码充值
+                >人工充值
                 </button>
             </div>
         </div>
@@ -95,7 +95,7 @@
         },
         created() {
             this.getRe_d();
-            this.getPay_qrCode();
+            this.getCus_qrCode();
         },
         mounted() {
 
@@ -120,8 +120,8 @@
 
                 }
             },
-            getPay_qrCode(){
-              this.$api.pay_qrCode().then(res=>{
+            getCus_qrCode(){
+              this.$api.cus_qrCode().then(res=>{
                   if (res.error_code===1){
                       this.pay_src=url+'/'+res.result;
                   }

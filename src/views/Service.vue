@@ -11,7 +11,7 @@
                     <span>QQ二维码</span>
                 </div>
                 <div class="qq-img">
-                    <img src="../assets/img/wx_img.png" alt="">
+                    <img :src="qqImg" alt="">
                 </div>
             </div>
             <div class="qq">
@@ -20,7 +20,7 @@
                     <span>微信二维码</span>
                 </div>
                 <div class="qq-img">
-                    <img src="../assets/img/wx_img.png" alt="">
+                    <img :src="wxImg" alt="">
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-
+    import {url} from '../request/api/base'
     import BottomTab from '../components/BottomTab'
 
     export default {
@@ -38,7 +38,10 @@
             BottomTab,
         },
         data() {
-            return {}
+            return {
+                qqImg:'',
+                wxImg:'',
+            }
         },
 
 
@@ -56,9 +59,10 @@
         },
         methods: {
             getCus_qrCode(){
-                this.$api.cus_qrCode().then(res=>{
+                this.$api.akf_qrCode().then(res=>{
                     if (res.error_code===1){
-                        // console.log(res);
+                        this.qqImg=url+'/'+res.result.qq_qrCode;
+                        this.wxImg=url+'/'+res.result.wx_qrCode;
                     }
                 })
             }

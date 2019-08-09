@@ -71,10 +71,12 @@
                     page: page+1
                 }).then(res => {
                     if (res.error_code === 1) {
-                        res.result.data.forEach((item,i)=>{
-                            item.confirm_at=item.confirm_at.split(' ')[0];
-                            item.create_time=item.create_time.split(' ')[0];
-                        });
+                        if (res.result.data.length>0){
+                            res.result.data.forEach((item,i)=>{
+                                item.confirm_at=item.confirm_at.split(' ')[0];
+                                item.create_time=item.create_time.split(' ')[0];
+                            });
+                        }
                         if (type===1){
                             this.recordList=[];
                             this.recordList.push( res.result.data);
