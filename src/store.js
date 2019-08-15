@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+// import Vue from 'vue'
+// import Vuex from 'vuex'
+// Vue.use(Vuex);
 
 import cc from './assets/js/cc'
 
-Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
@@ -11,6 +11,7 @@ export default new Vuex.Store({
     username:cc.getLocal('username')||'',
     money:cc.getLocal('money')||'',
     token:cc.getLocal(`token`)||``,
+    face:cc.getLocal('face')||``,
   },
   mutations: {
     setId(state,val){
@@ -25,7 +26,10 @@ export default new Vuex.Store({
     },
     setToken(state,val){
       cc.setLocal(`token`,val)
-    }
+    },
+    setFace(state,val){
+      cc.setLocal(`face`,val)
+    },
   },
   actions: {
 

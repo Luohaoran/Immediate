@@ -1,5 +1,7 @@
 import { Toast } from 'vant';
 
+
+
 export default {
     Msg(text){
         Toast(text);

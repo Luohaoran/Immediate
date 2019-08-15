@@ -4,7 +4,7 @@
             <div class="my-box">
                 <div class="top">
                     <div class="my-img">
-                        <img :src="user_img" alt="">
+                        <img :src="face" alt="">
                     </div>
                     <div class="my-message">
                         <div class="user-name">
@@ -64,7 +64,6 @@
                         <img src="../assets/img/item_right.png" alt="">
                     </div>
                 </div>
-
             </div>
             <!--            <div class="item-3">-->
             <!--                <div class="item-cell" @click="go('/Set')">-->
@@ -99,7 +98,7 @@
         },
         data() {
             return {
-                user_img: '',
+                face: this.$store.state.face ||'',
                 username: this.$store.state.username || '',
                 money: this.$store.state.money || '',
                 id: this.$store.state.id || '',
@@ -130,13 +129,17 @@
         },
 
 
-        beforeRouteEnter(to, from, next){
-            next(vm=>{
-                if (!cc.getLocal('token')){
-                    if (vm.$route.query.token){
-                        cc.setLocal('token',vm.$route.query.token)
-                    }else {
-                        window.location.href = `${url}/api/wx/cookie`;//后端设置cookie
+        beforeRouteEnter(to, from, next) {
+            next(vm => {
+                if (!cc.getLocal('token')) {
+                    if (vm.$route.query.token) {
+                        vm.$store.commit('setToken',vm.$route.query.token);
+                        vm.$store.commit('setUsername',vm.$route.query.name);
+                        vm.username=vm.$route.query.name;
+                        vm.$store.commit('setFace',`${vm.$route.query.face}`);
+                        vm.face=`${vm.$route.query.face}`;
+                    } else {
+                        window.location.href = `http://192.168.8.118:82/api/wx/cookie`;//后端设置cookie
                     }
                 }
             });
@@ -145,21 +148,26 @@
             next()
         },
         created() {
-            this.$api.center().then(res => {
-                if (res.error_code === 1) {
-                    this.user_img = res.result.face;
-                    this.$store.commit('setId', res.result.id);
-                    this.$store.commit('setUsername', res.result.username);
-                    this.$store.commit('setMoney', res.result.money);
-                } else {
-                    this.$utils.Msg(res.msg)
-                }
-            });
+            if (!cc.getLocal('id')){
+                this.getCenter();
+            }
         },
         mounted() {
 
         },
         methods: {
+            getCenter(){
+                this.$api.center().then(res => {
+                    if (res.error_code === 1) {
+                        // this.user_img = res.result.face;
+                        this.$store.commit('setId', res.result.id);
+                        this.$store.commit('setUsername', res.result.username);
+                        this.$store.commit('setMoney', res.result.money);
+                    } else {
+                        this.$utils.Msg(res.msg)
+                    }
+                });
+            },
             goPut() {
                 this.$router.push('/Put')
             },

@@ -12,16 +12,16 @@
                  }">
                 <div class="time" v-if="item.time">{{item.time}}</div>
                 <div class="big-box">
-                    <img class="touxiang" src="../assets/img/touxiang.png" alt="">
+                    <img class="touxiang" :src="item.face" alt="">
                     <div class="message-box" v-if="item.type!==3">
-                        <div class="user-name" v-if="item.type===2">
-                            {{item.username}}
-                        </div>
+                        <!--                        <div class="user-name" v-if="item.type===2">-->
+                        <!--                            {{item.username}}-->
+                        <!--                        </div>-->
                         <div class="message-content">
                             {{item.text}}
                         </div>
                     </div>
-                    <div class="hongbao-box" v-if="item.type===3" @click="openHongbao(item.touxiang,item.username)">
+                    <div class="hongbao-box" v-if="item.type===3" @click="openHongbao(item.face,item.username)">
                         <div class="hongbao-top">
 
                             <img src="../assets/img/hongbao.png" alt="">
@@ -79,6 +79,7 @@
     import VEmojiPicker from 'v-emoji-picker';
     import packData from 'v-emoji-picker/data/emojis.json';
     import cc from "../assets/js/cc";
+
     export default {
         //投注
         name: "Betting",
@@ -99,77 +100,78 @@
                 hbTouxiang: '',
                 emoji: false,
                 hbName: '',
-                pack: packData.slice(0, 50),
+                pack: packData.slice(0, 100),
+                // pack: packData,
                 message: [
-                    {
-                        username: '小红',
-                        text: '你好啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
-                        type: 1,
-                        touxiang: require('../assets/img/touxiang.png'),
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊',
-                        type: 2,
-                        time: '22:22',
-                        touxiang: require('../assets/img/touxiang.png'),
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊',
-                        type: 1,
-                        touxiang: require('../assets/img/touxiang.png'),
-                        time: '22:22',
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊',
-                        touxiang: require('../assets/img/touxiang.png'),
-                        type: 2,
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊',
-                        touxiang: require('../assets/img/touxiang.png'),
-                        type: 1
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
-                        type: 3,
-                        touxiang: require('../assets/img/touxiang.png'),
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊',
-                        type: 3,
-                        touxiang: require('../assets/img/touxiang.png'),
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊',
-                        type: 3,
-                        touxiang: require('../assets/img/touxiang.png'),
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊',
-                        type: 3,
-                        touxiang: require('../assets/img/touxiang.png'),
-                    },
-                    {
-                        username: '小红',
-                        text: '你好啊',
-                        type: 3,
-                        touxiang: require('../assets/img/touxiang.png'),
-                    }
-
+                    //type 1是自己 2是别人 3是红包
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
+                    //     type: 1,
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊',
+                    //     type: 2,
+                    //     time: '22:22',
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊',
+                    //     type: 1,
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    //     time: '22:22',
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊',
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    //     type: 2,
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊',
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    //     type: 1
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
+                    //     type: 3,
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊',
+                    //     type: 3,
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊',
+                    //     type: 3,
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊',
+                    //     type: 3,
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    // },
+                    // {
+                    //     username: '小红',
+                    //     text: '你好啊',
+                    //     type: 3,
+                    //     touxiang: require('../assets/img/touxiang.png'),
+                    // }
                 ],
                 hbVisible: false,
                 websock: null,
                 reconnectData: null,
                 lockReconnect: false,    //避免重复连接，因为onerror之后会立即触发 onclose
-                timeout: 10000,          //10s一次心跳检测
+                timeout: 1000 * 10,          //10s一次心跳检测
                 timeoutObj: null,
                 serverTimeoutObj: null,
             }
@@ -181,14 +183,26 @@
             next()
         },
         created() {
-            // this.initWebSocket();
+            console.log(true ? (true ? (1) : (2)) : (3));
+
+            this.initWebSocket();
+            if (cc.getSession('message')) {
+                this.message = cc.getSession('message');
+            }
+        },
+        beforeDestroy() {
+            let obj = {
+                'type': 'logout',
+                'client_id': '7f00000108ff00000001',
+            };
+            this.wsSend(obj);
         },
         destroyed() {
-            // this.lockReconnect = true;
-            // this.websock.close()    ;               //离开路由之后断开websocket连接
-            // clearTimeout(this.reconnectData);      //离开清除 timeout
-            // clearTimeout(this.timeoutObj);         //离开清除 timeout
-            // clearTimeout(this.serverTimeoutObj);   //离开清除 timeout
+            this.lockReconnect = true;
+            this.wsClose();               //离开路由之后断开websocket连接
+            clearTimeout(this.reconnectData);      //离开清除 timeout
+            clearTimeout(this.timeoutObj);         //离开清除 timeout
+            clearTimeout(this.serverTimeoutObj);   //离开清除 timeout
         },
         mounted() {
             this.topTop();
@@ -196,34 +210,88 @@
             $('#Categories').hide();
         },
         methods: {
+            curentTime(now) {
+                var year = now.getFullYear();       //年
+                var month = now.getMonth() + 1;     //月
+                var day = now.getDate();            //日
+                var hh = now.getHours();            //时
+                var mm = now.getMinutes();          //分
+                var ss = now.getSeconds();           //秒
+                var clock = year + "-";
+                if (month < 10)
+                    clock += "0";
+                clock += month + "-";
+                if (day < 10)
+                    clock += "0";
+                clock += day + " ";
+                if (hh < 10)
+                    clock += "0";
+                clock += hh + ":";
+                if (mm < 10) clock += '0';
+                clock += mm + ":";
+                if (ss < 10) clock += '0';
+                clock += ss;
+                return (clock);
+            },
             initWebSocket() {
                 console.log('启动中');
-                let wsurl = '你的websockt url';
+                let wsurl = 'ws://192.168.8.118:7272';
                 this.websock = new WebSocket(wsurl);
-                this.websock.onopen = this.websocketonopen;          //连接成功
-                this.websock.onmessage = this.websocketonmessage;    //广播成功
-                this.websock.onerror = this.websocketonerror;        //连接断开，失败
-                this.websock.onclose = this.websocketclose;          //连接关闭
-            },             //初始化weosocket
-            websocketonopen() {
+                this.websock.onopen = this.wsOpen;          //连接成功
+                this.websock.onmessage = this.wsMessage;    //广播成功
+                this.websock.onerror = this.wsError;        //连接断开，失败
+                this.websock.onclose = this.wsClose;          //连接关闭
+            },//初始化webSocket
+            wsOpen() {
                 console.log('连接成功');
-                this.heatBeat();
-            },           //连接成功
-            websocketonerror() {
-                console.log('连接失败');
+                let obj = {
+                    'type': 'login',
+                    'client_name': this.$store.state.name,
+                    'room_id': '1',
+                    'face': this.$store.state.face,
+                    'token': this.$store.state.token,
+                };
+                this.websock.send(JSON.stringify(obj))
+                // this.heatBeat();
+            },//连接成功
+            wsError() {
+                console.log('连接错误');
+                // this.$utils.Msg('加入聊天室失败');
                 this.reconnect();
-            },          //连接失败
-            websocketclose() {
+            },//连接失败
+            wsClose() {
                 console.log('断开连接');
-                this.reconnect();
-            },            //各种问题导致的 连接关闭
-            websocketonmessage(data) {
-                this.heatBeat();      //收到消息会刷新心跳检测，如果一直收到消息，就推迟心跳发送
-                let msgData = JSON.parse(data);
-            },    //数据接收
-            websocketsend(data) {
+            },//各种问题导致的 连接关闭
+            wsMessage(data) {//接收数据
+                let res = JSON.parse(data.data);
+                if (res.type === 'ping') {//心跳检测
+                    let obj = {
+                        'type': 'pong'
+                    };
+                    this.websock.send(JSON.stringify(obj));
+                }
+                if (res.type === 'login') {
+
+                }
+                if (res.type === 'say') {
+                    let obj = {
+                        username: res.from_client_name,
+                        text: res.content,
+                        face: res.face,
+                        type: this.$store.state.token == res.token ? 1 : 2,
+                    };
+                    this.message.push(obj);
+                    if (this.message.length > 100) {//聊天最多100条
+                        this.message.shift();
+                    }
+                    cc.setSession('message', this.message);//数据同步到缓存
+                    this.topTop();
+                }
+                // this.heatBeat();      //收到消息会刷新心跳检测，如果一直收到消息，就推迟心跳发送
+            },//数据接收
+            wsSend(data) {
                 this.websock.send(JSON.stringify(data));
-            },         //数据发送
+            },//数据发送
             reconnect() {
                 if (this.lockReconnect) {  //这里很关键，因为连接失败之后之后会相继触发 连接关闭，不然会连接上两个 WebSocket
                     return
@@ -234,7 +302,7 @@
                     this.initWebSocket();
                     this.lockReconnect = false;
                 }, 5000)
-            },                 //socket重连
+            },//socket重连
             heatBeat() {
                 this.timeoutObj && clearTimeout(this.timeoutObj);
                 this.serverTimeoutObj && clearTimeout(this.serverTimeoutObj);
@@ -244,23 +312,24 @@
                         this.websock.close();       //如果  5秒之后我们没有收到 后台返回的心跳检测数据 断开socket，断开后会启动重连机制
                     }, 5000);
                 }, this.timeout)
-            },                  //心跳检测
-
-
+            },//心跳检测
             sendMessage() {
                 if (!this.emoji) {
                     this.$refs.message.focus();
                 }
                 if (this.text !== '') {
-                    var obj = {
-                        username: '小红',
-                        text: this.text,
-                        type:1,
-                        touxiang: require('../assets/img/touxiang.png'),
+                    let obj = {
+                        'type': 'say',
+                        'from_client_id': '7f00000108ff00000001',
+                        'from_client_name': this.$store.state.username,
+                        'to_client_id': 'all',
+                        'content': this.text,
+                        'time': this.curentTime(new Date()),
+                        'face': this.$store.state.face,
+                        'token': cc.getLocal('token')
                     };
-                    this.message.push(obj);
+                    this.wsSend(obj);
                     this.text = '';
-                    this.topTop();
                 }
             },//发送消息
             openHongbao(src, name) {
@@ -419,8 +488,6 @@
 
             .big-box {
                 margin-top: 40px;
-                display: flex;
-                align-items: center;
 
                 img {
                     width: 80px;
@@ -432,11 +499,16 @@
                     max-width: 62%;
                     height: 100%;
                     display: flex;
+                    margin-top: 10px;
                     align-items: center;
-                    padding: 10px 20px;
+                    padding: 15px 20px;
                     border-radius: 10px;
                     position: relative;
                     text-align: left;
+
+                    .message-content {
+                        word-break: break-all; /*内部数字字母换行*/
+                    }
                 }
             }
 
@@ -470,38 +542,30 @@
         .he {
             .big-box {
                 display: flex;
+                align-items: flex-start;
 
                 .message-box {
                     margin-left: 30px;
-                    padding: 0;
-                    display: flex;
-                    flex-wrap: wrap;
+                    background-color: white;
 
                     .user-name {
                         width: 100%;
                         color: #404040;
                     }
+                }
 
-                    .message-content {
-                        padding: 10px 20px;
-                        background-color: white;
-                        border-radius: 10px;
-                    }
-
-                    .message-content:before {
-                        position: absolute;
-                        content: "";
-                        width: 0;
-                        height: 0;
-                        right: 100%;
-                        top: 55px;
-                        border-top: 13px solid transparent;
-                        border-right: 20px solid #ffffff;
-                        border-bottom: 13px solid transparent;
-                    }
+                .message-box:before {
+                    position: absolute;
+                    content: "";
+                    width: 0;
+                    height: 0;
+                    right: 100%;
+                    top: 20px;
+                    border-top: 13px solid transparent;
+                    border-right: 20px solid #ffffff;
+                    border-bottom: 13px solid transparent;
                 }
             }
-
         }
 
         .hongbao {
@@ -561,24 +625,6 @@
                         border-bottom-left-radius: 10px;
 
                     }
-
-                    /*.message-content {*/
-                    /*    padding: 10px 20px;*/
-                    /*    background-color: white;*/
-                    /*    border-radius: 10px;*/
-                    /*}*/
-
-                    /*.message-content:before {*/
-                    /*    position: absolute;*/
-                    /*    content: "";*/
-                    /*    width: 0;*/
-                    /*    height: 0;*/
-                    /*    right: 100%;*/
-                    /*    top: 20px;*/
-                    /*    border-top: 13px solid transparent;*/
-                    /*    border-right: 20px solid #ffffff;*/
-                    /*    border-bottom: 13px solid transparent;*/
-                    /*}*/
                 }
             }
         }
@@ -664,13 +710,14 @@
 
     #EmojiPicker {
         width: 100% !important;
-        height: 200*2px !important;
-        overflow: scroll !important;
+        height: 85% !important;
 
         #Emojis {
             .container-emoji {
-                overflow: hidden !important;
-                padding-bottom: 150px !important;
+                /*overflow: hidden !important;*/
+                overflow-y: scroll !important;
+                padding-bottom: 100px !important;
+                height: 10.1875rem !important;
             }
         }
     }
@@ -678,5 +725,4 @@
     #EmojiPicker::-webkit-scrollbar {
         display: none;
     }
-
 </style>

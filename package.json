@@ -31,6 +31,8 @@
     "eslint-plugin-vue": "^5.0.0",
     "less-loader": "^5.0.0",
     "qs": "^6.7.0",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "compression-webpack-plugin": "^1.1.12",
+    "uglifyjs-webpack-plugin": "^2.1.3"
   }
 }

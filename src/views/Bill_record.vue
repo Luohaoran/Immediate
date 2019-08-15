@@ -140,7 +140,6 @@
         methods: {
             menuCheck(index) {
                 this.menuIndex = index;
-
             }
         },
 
@@ -176,6 +175,7 @@
                     height: 40px;
                 }
             }
+
             .on {
                 background-color: rgb(237, 237, 237);
             }
@@ -188,17 +188,20 @@
             .tuiguang-box, .geren-box, .fanshui-box {
                 width: 100%;
                 height: 100%;
-                .top-message{
+
+                .top-message {
                     height: 15%;
                     width: 100%;
-                    background-color: rgb(226,226,226);
+                    background-color: rgb(226, 226, 226);
                     display: flex;
-                    .left,.right{
+
+                    .left, .right {
                         display: flex;
                         flex-wrap: wrap;
                         width: 50%;
                         height: 100%;
-                        div{
+
+                        div {
                             display: flex;
                             align-items: center;
                             justify-content: center;
@@ -206,24 +209,28 @@
                         }
                     }
                 }
-                .record-table{
+
+                .record-table {
                     height: 85%;
                     width: 100%;
                     background-color: #2c3e50;
-                    .table-title{
+
+                    .table-title {
                         width: 100%;
                         height: 8%;
-                        background-color: rgb(237,237,237);
+                        background-color: rgb(237, 237, 237);
                         display: flex;
                         justify-content: space-around;
                         align-items: center;
                     }
-                    .table-body{
+
+                    .table-body {
                         height: 92%;
                         width: 100%;
                         background-color: white;
                         overflow-y: scroll;
-                        .item-box{
+
+                        .item-box {
                             border-bottom: 1px solid #999999;
                             height: 10%;
                             width: 100%;

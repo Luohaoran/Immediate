@@ -37,6 +37,7 @@
 
 <script>
     import Top from '../components/Top';
+    import utils from '../assets/js/utils'
     import { Dialog } from 'vant';
 
     export default {
@@ -86,7 +87,7 @@
                 this.checkValue = item;
                 this.selectVisible = !this.selectVisible
             },//下拉点击事件
-            okBtn(){
+            okBtn:utils.throttle(function () {
                 let obj={
                     bill_no:this.bill_no,
                     money:this.jine,
@@ -94,7 +95,7 @@
                     bank_card:this.checkValue,
                 };
                 if (this.checkValue==='请选择银行卡号'){
-                  this.$utils.Msg('请选择银行卡号')
+                    this.$utils.Msg('请选择银行卡号')
                 } else if (this.jine===''){
                     this.$utils.Msg('请输入金额')
                 } else {
@@ -111,7 +112,7 @@
                         }
                     })
                 }
-            },
+            },500)
         },
 
     }

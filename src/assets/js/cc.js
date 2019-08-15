@@ -1,10 +1,12 @@
+//cookie
 function setCookie(key, value, day) {
+
     if (day !== 0) {
         var expires = day * 24 * 60 * 60 * 1000;
         var date = new Date(+new Date() + expires);
-        document.cookie = key + "=" + escape(value) + ";expires=" + date.toUTCString();
+        document.cookie =`${key}=${escape(value)};expires=${date.toUTCString()}`
     } else {
-        document.cookie = key + "=" + escape(value);
+        document.cookie = `${key}=${escape(value)}`;
     }
 }
 function getCookie(key) {
@@ -18,6 +20,7 @@ function getCookie(key) {
 function delCookie(key) {
     setCookie(key, ' ', -1);
 }
+//session
 function setSession(key, val) {
     sessionStorage.setItem(key, JSON.stringify(val))
 }
@@ -28,6 +31,10 @@ function getSession(key) {
         return sessionStorage.getItem(key);
     }
 }
+function delSession(key) {
+    sessionStorage.removeItem(key)
+}
+//local
 function setLocal(key,val) {
     localStorage.setItem(key,JSON.stringify(val))
 }
@@ -39,16 +46,17 @@ function getLocal(key) {
     }
 
 }
-
+function delLocal(key) {
+    localStorage.removeItem(key);
+}
 export default {
     setSession:setSession,
     getSession:getSession,
-    delSession() {
-        localStorage.clear();
-    },
+    delSession:delSession,
     setCookie: setCookie,
     getCookie: getCookie,
     delCookie: delCookie,
     getLocal:getLocal,
     setLocal:setLocal,
+    delLocal:delLocal,
 }

@@ -3,10 +3,33 @@
         <Top title="添加银行卡"></Top>
         <div class="content">
             <div class="from">
-                <input type="text" placeholder="开户人名字" v-model="bank_username">
-                <input type="text" placeholder="卡号" v-model="bank_card">
-                <input type="text" placeholder="银行名称" v-model="bank_name">
-                <input type="text" placeholder="开户行地址" v-model="bank_address">
+                <div>
+                    <input type="text" placeholder="开户人名字" v-model="bank_username">
+                </div>
+                <div>
+                    <input type="text" placeholder="卡号" v-model="bank_card">
+                </div>
+                <div class="bank-name">
+                    <div class="show-content" @click="showSlect">
+                        <div class="text">
+                            {{checkValue}}
+                        </div>
+                        <img src="../assets/img/select_img.png" alt="">
+                    </div>
+                    <div class="select-box" v-show="selectVisible">
+                        <div
+                                class="select-item"
+                                v-for="(item,index) in selectitem"
+                                :key="index"
+                                @click="checkSelect(item)"
+                        >
+                            <div>{{item}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <input type="text" placeholder="开户行地址" v-model="bank_address">
+                </div>
             </div>
             <div class="okBtn" @click="okBtn()">
                 确认
@@ -24,10 +47,13 @@
         },
         data() {
             return {
+                selectVisible:false,
                 bank_username: '',
+                checkValue: '请选择银行',
                 bank_card: '',
                 bank_name: '',
                 bank_address: '',
+                selectitem: ['邮政银行', '建设银行'],
             }
         },
 
@@ -123,15 +149,22 @@
                     this.$utils.Msg('开户行地址不能为空')
                 } else {
                     this.$api.addBank(obj).then(res => {
-                        if (res.error_code===1){
+                        if (res.error_code === 1) {
                             this.$utils.Msg('添加成功');
                             this.$router.go(-1)
-                        }else {
+                        } else {
                             this.$utils.Msg(res.msg);
                         }
                     })
                 }
-            }
+            },
+            showSlect() {
+                this.selectVisible = !this.selectVisible
+            },//显示下拉选择
+            checkSelect(item) {
+                this.checkValue = item;
+                this.selectVisible = !this.selectVisible
+            },//下拉点击事件
         },
 
     }
@@ -150,6 +183,39 @@
             margin: 0 auto;
             width: 90%;
 
+            .show-content {
+                background-color: rgb(237, 237, 237);
+                height: 50*2px;
+                border-radius: 5px;
+                padding: 0 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                color: #666666;
+                margin-bottom: 10px;
+                .text{
+                    width: 100%;
+                    text-align: center;
+                }
+
+                img {
+                    width: 15*2px;
+                }
+            }
+            .select-box {
+                position: fixed;
+                width: 90%;
+
+                .select-item {
+                    border-radius: 5px;
+                    height: 50*2px;
+                    line-height: 50*2px;
+                    padding: 0 20px;
+                    background-color: rgb(171, 171, 171);
+                    border-bottom: 1px solid white;
+                    text-align: center;
+                }
+            }
             input {
                 width: 100%;
                 height: 100px;

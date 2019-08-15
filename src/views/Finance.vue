@@ -181,7 +181,6 @@
                     justify-content: space-between;
                     align-items: center;
                     color: #666666;
-
                     img {
                         width: 15*2px;
                     }

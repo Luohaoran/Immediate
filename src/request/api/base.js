@@ -3,11 +3,11 @@
  */
 var url;
 process.env.NODE_ENV === 'development'
-    ?url = 'http://www.niuniu.com'
-    :url = 'http://www.niuniu.com';
+    ?url = 'http://192.168.8.118:82'
+    :url = 'http://192.168.8.118:82';
 const base = {
     spread: url + '/api/spread', //我的推广界面
-    center: url + '/api/center',//个人中心首页展示
+    center:  url+'/api/center',//个人中心首页展示
     getBank: url + '/api/bank',//获取用户银行卡
     addBank: url + '/api/bank',//添加用户银行卡
     deleteBank: url + '/api/dbank',//删除用户银行卡
