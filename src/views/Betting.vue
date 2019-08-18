@@ -46,6 +46,9 @@
                     </div>
                 </div>
             </van-popup>
+            <van-popup v-model="timeVisible">
+<!--                <img :src="" alt="">-->
+            </van-popup>
         </div>
         <div class="input" @click.stop>
             <div class="one">
@@ -168,6 +171,7 @@
                     // }
                 ],
                 hbVisible: false,
+                timeVisible:false,//开奖时间
                 websock: null,
                 reconnectData: null,
                 lockReconnect: false,    //避免重复连接，因为onerror之后会立即触发 onclose

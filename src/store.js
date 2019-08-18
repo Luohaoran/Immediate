@@ -19,16 +19,20 @@ export default new Vuex.Store({
       state.id=val;
     },
     setUsername(state,val){
-      cc.setLocal('username',val)
+      cc.setLocal('username',val);
+      state.username=val
     },
     setMoney(state,val){
-      cc.setLocal('money',val)
+      cc.setLocal('money',val);
+      state.money=val;
     },
     setToken(state,val){
-      cc.setLocal(`token`,val)
+      cc.setLocal(`token`,val);
+      state.token=val;
     },
     setFace(state,val){
-      cc.setLocal(`face`,val)
+      cc.setLocal(`face`,val);
+      state.face=val;
     },
   },
   actions: {

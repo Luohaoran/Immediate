@@ -36,7 +36,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(// 对响应数据做点什么
     (res) => {
         let code = res.data.error_code;
-        if (code === 10000) {//这里等于10000就代表过期
+        if (code === 2) {//这里等于2就代表过期
             getToken();
         } else {
             return res.data
