@@ -7,9 +7,9 @@
         <div class="content">
             <div class="hb_name">
                 <div class="hongbao-title">
-                    <div class="img">
-                        <img :src="hbTouxiang" alt="">
-                    </div>
+<!--                    <div class="img">-->
+<!--                        <img :src="hbTouxiang" alt="">-->
+<!--                    </div>-->
                     <div class="title-text">{{hbName}} 的红包</div>
                 </div>
                 <div class="hongbao-jine">
@@ -25,18 +25,18 @@
             </div>
             <div class="hongba-time">20个红包1小时内领取完毕</div>
             <div class="hongbao-list">
-                <div class="hongbao-item" v-for="n in 10" :key="n">
+                <div class="hongbao-item" v-for="(item,index) in people" :key="index">
                     <div class="hongbao-item-left">
                         <div class="hongbao-item-left-img">
-                            <img src="../assets/img/touxiang.png" alt="">
+                            <img :src="item.face" alt="">
                         </div>
                         <div class="hongbao-item-left-text">
-                            <div class="name">你的味道</div>
-                            <div class="time">06-20 15:24</div>
+                            <div class="name">{{item.name}}</div>
+                            <div class="time">{{item.time}}</div>
                         </div>
                     </div>
                     <div class="hongbao-item-right">
-                        <span>￥0.04</span>
+                        <span>￥{{item.code}}</span>
                     </div>
                 </div>
             </div>
@@ -52,7 +52,8 @@
         data() {
             return {
                 hbName:'',
-                hbTouxiang:''
+                hbTouxiang:'',
+                people:'',
             }
         },
 
@@ -66,6 +67,7 @@
         created() {
             this.hbName=this.$route.params.name;
             this.hbTouxiang=this.$route.params.src;
+            this.people=this.$route.params.people;
 
         },
         mounted() {
@@ -150,6 +152,7 @@
             flex-wrap: wrap;
             overflow-y: scroll;
             flex-direction: row-reverse;
+            align-content: flex-start;
             .hongbao-item{
                 height: 109px;
                 width: 95%;

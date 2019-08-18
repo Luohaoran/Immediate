@@ -10,7 +10,7 @@
                         <div class="user-name">
                             <div class="title">昵称</div>
                             ：
-                            <div class="text">{{username}}</div>
+                            <div class="text">{{name}}</div>
                         </div>
                         <div class="user-id">
                             <div class="title">游戏ID</div>
@@ -99,7 +99,7 @@
         data() {
             return {
                 face: this.$store.state.face || '',
-                username: this.$store.state.username || '',
+                name: this.$store.state.name || '',
                 money: this.$store.state.money || '',
                 id: this.$store.state.id || '',
                 itemList: [
@@ -134,12 +134,12 @@
                 if (!cc.getLocal('token')) {
                     if (vm.$route.query.token) {
                         vm.$store.commit('setToken', vm.$route.query.token);
-                        vm.$store.commit('setUsername', vm.$route.query.name);
-                        vm.username = vm.$route.query.name;
+                        vm.$store.commit('setName', vm.$route.query.name);
+                        vm.name = vm.$route.query.name;
                         vm.$store.commit('setFace', vm.$route.query.face);
                         vm.face = vm.$route.query.face;
                     } else {
-                        window.location.href = `http://192.168.8.118:82/api/wx/cookie`;//后端设置cookie
+                        window.location.href = `http://www.h86i.cn/api/wx/token`;//后端设置cookie
                     }
                 }
             });

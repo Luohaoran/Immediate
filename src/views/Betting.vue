@@ -21,7 +21,7 @@
                             {{item.text}}
                         </div>
                     </div>
-                    <div class="hongbao-box" v-if="item.type===3" @click="openHongbao(item.face,item.username)">
+                    <div class="hongbao-box" v-if="item.type===3" @click="openHongbao(item.face,item.red_name,item.people,item.red_name)">
                         <div class="hongbao-top">
 
                             <img src="../assets/img/hongbao.png" alt="">
@@ -39,15 +39,21 @@
                         <div class="img">
                             <img :src="hbTouxiang" alt="">
                         </div>
-                        <div class="title-text">{{hbName}} 的红包</div>
+                        <div class="title-text">{{red_name}} 的红包</div>
                     </div>
                     <div class="hongbao-open">
                         <div class="img" @click="kaiHongbao()"></div>
                     </div>
                 </div>
             </van-popup>
-            <van-popup v-model="timeVisible">
-<!--                <img :src="" alt="">-->
+            <van-popup
+                    v-model="timeVisible"
+                    position="top"
+                    :overlay="false"
+            >
+                <div class="time-box">
+                    <img :src="timeSrc" alt="">
+                </div>
             </van-popup>
         </div>
         <div class="input" @click.stop>
@@ -72,7 +78,6 @@
                 </div>
             </div>
         </div>
-
         <bottom-tab/>
     </div>
 </template>
@@ -172,6 +177,8 @@
                 ],
                 hbVisible: false,
                 timeVisible:false,//开奖时间
+                timeSrc:'',
+                people:'',
                 websock: null,
                 reconnectData: null,
                 lockReconnect: false,    //避免重复连接，因为onerror之后会立即触发 onclose
@@ -187,8 +194,7 @@
             next()
         },
         created() {
-            console.log(true ? (true ? (1) : (2)) : (3));
-
+            this.hbVisible=false;
             this.initWebSocket();
             if (cc.getSession('message')) {
                 this.message = cc.getSession('message');
@@ -239,7 +245,7 @@
             },
             initWebSocket() {
                 console.log('启动中');
-                let wsurl = 'ws://192.168.8.118:7272';
+                let wsurl = 'ws://47.244.228.229:7272';
                 this.websock = new WebSocket(wsurl);
                 this.websock.onopen = this.wsOpen;          //连接成功
                 this.websock.onmessage = this.wsMessage;    //广播成功
@@ -273,13 +279,11 @@
                         'type': 'pong'
                     };
                     this.websock.send(JSON.stringify(obj));
-                }
-                if (res.type === 'login') {
+                }else if (res.type === 'login') {
 
-                }
-                if (res.type === 'say') {
+                } else if (res.type === 'say') {
                     let obj = {
-                        username: res.from_client_name,
+                        name: res.from_client_name,
                         text: res.content,
                         face: res.face,
                         type: this.$store.state.token == res.token ? 1 : 2,
@@ -290,6 +294,42 @@
                     }
                     cc.setSession('message', this.message);//数据同步到缓存
                     this.topTop();
+                }else if (res.type==='send_red_bags_img'){
+                    let _this=this;
+                    var show=()=>{
+                        this.timeVisible=true;
+                        setTimeout(function () {
+                            _this.timeVisible=false
+                        },2000)
+                    };
+                    switch (res.ident) {
+                        case 1:
+                            this.timeSrc=require('../assets/img/ident_1.png');
+                            show();
+                            break;
+                        case 2:
+                            this.timeSrc=require('../assets/img/ident_2.png');
+                            show();
+                            break;
+                        case 3:
+                            this.timeSrc=require('../assets/img/ident_3.png');
+                            show();
+                            break;
+                        case 4:
+                            var obj = {
+                                name: res.from_client_name,
+                                face: res.face,
+                                type: 3,
+                                people:res.data.people,
+                                red_name:res.data.red_name
+                            };
+                            this.message.push(obj);
+                            if (this.message.length > 100) {//聊天最多100条
+                                this.message.shift();
+                            }
+                            cc.setSession('message', this.message);//数据同步到缓存
+                            this.topTop();
+                    }
                 }
                 // this.heatBeat();      //收到消息会刷新心跳检测，如果一直收到消息，就推迟心跳发送
             },//数据接收
@@ -325,7 +365,7 @@
                     let obj = {
                         'type': 'say',
                         'from_client_id': '7f00000108ff00000001',
-                        'from_client_name': this.$store.state.username,
+                        'from_client_name': this.$store.state.name,
                         'to_client_id': 'all',
                         'content': this.text,
                         'time': this.curentTime(new Date()),
@@ -336,10 +376,12 @@
                     this.text = '';
                 }
             },//发送消息
-            openHongbao(src, name) {
+            openHongbao(src, name,people,red_name) {
                 this.hbVisible = true;
                 this.hbTouxiang = src;
+                this.people=people;
                 this.hbName = name;
+                this.red_name=red_name;
             },//第一次点开红包
             selectEmoji(emoji) {
                 this.text += (emoji.emoji);
@@ -351,7 +393,9 @@
                     _this.$router.push({
                         name: '/Hongbao_record', params: {
                             src: _this.hbTouxiang,
-                            name: _this.hbName
+                            name: _this.hbName,
+                            people:_this.people,
+                            red_name:_this.red_name
                         }
                     })
                 });
@@ -414,6 +458,16 @@
         background-color: rgb(237, 237, 237);
         transition: all .1s linear;
 
+        .time-box{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding-top: 100px;
+            img{
+                width: 50%;
+                height: 50%;
+            }
+        }
         .last-box {
             margin-bottom: 100px;
         }
