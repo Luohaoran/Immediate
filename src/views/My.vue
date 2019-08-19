@@ -138,7 +138,7 @@
                         vm.$store.commit('setFace', vm.$route.query.face);
                         vm.face = vm.$route.query.face;
                     } else {
-                        window.location.href = `http://192.168.8.118:82/api/wx/cookie`;//后端设置cookie
+                        window.location.href = `http://www.h86i.cn/api/wx/token`;//后端设置cookie
                     }
                 }
             });

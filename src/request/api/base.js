@@ -3,8 +3,8 @@
  */
 var url;
 process.env.NODE_ENV === 'development'
-    ?url = 'http://192.168.8.118:82'
-    :url = 'http://192.168.8.118:82';
+    ?url = 'http://www.h86i.cn'
+    :url = 'http://www.h86i.cn';
 const base = {
     spread: url + '/api/spread', //我的推广界面
     center:  url+'/api/center',//个人中心首页展示

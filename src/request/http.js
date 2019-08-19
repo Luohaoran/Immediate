@@ -6,7 +6,7 @@ import {url} from "./api/base";
 function getToken() {
     cc.delLocal('token');
     // window.location.href = `${url}/api/wx/cookie`;//后端设置cookie
-    window.location.href = `http://192.168.8.118:82/api/wx/cookie`;//后端设置cookie
+    window.location.href = `http://www.h86i.cn/api/wx/token`;//后端设置cookie
 }
 
 axios.create({
@@ -36,7 +36,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(// 对响应数据做点什么
     (res) => {
         let code = res.data.error_code;
-        if (code === 10000) {//这里等于10000就代表过期
+        if (code === 2) {//这里等于2就代表过期
             getToken();
         } else {
             return res.data

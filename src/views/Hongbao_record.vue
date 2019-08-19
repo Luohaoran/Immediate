@@ -7,9 +7,9 @@
         <div class="content">
             <div class="hb_name">
                 <div class="hongbao-title">
-                    <div class="img">
-                        <img :src="hbTouxiang" alt="">
-                    </div>
+                    <!--                    <div class="img">-->
+                    <!--                        <img :src="hbTouxiang" alt="">-->
+                    <!--                    </div>-->
                     <div class="title-text">{{hbName}} 的红包</div>
                 </div>
                 <div class="hongbao-jine">
@@ -51,11 +51,13 @@
         components: {},
         data() {
             return {
+
                 hbName: '',
                 hbTouxiang: '',
                 people: '',
                 red_count_code: '',
                 red_count_num: '',
+
 
             }
         },

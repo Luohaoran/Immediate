@@ -40,20 +40,11 @@
                         <div class="img">
                             <img :src="hbTouxiang" alt="">
                         </div>
-                        <div class="title-text">{{red_name}} 的红包</div>
+                        <div class="title-text">{{hbName}} 的红包</div>
                     </div>
                     <div class="hongbao-open">
                         <div class="img" @click="kaiHongbao()"></div>
                     </div>
-                </div>
-            </van-popup>
-            <van-popup
-                    v-model="timeVisible"
-                    :overlay="false"
-                    class="time"
-            >
-                <div class="time-box">
-                    <img :src="timeSrc" alt="">
                 </div>
             </van-popup>
         </div>
@@ -79,6 +70,7 @@
                 </div>
             </div>
         </div>
+
         <bottom-tab/>
     </div>
 </template>
@@ -89,16 +81,12 @@
     import packData from 'v-emoji-picker/data/emojis.json';
     import cc from "../assets/js/cc";
 
-
-    // 注册 Lazyload 组件
-
-
     export default {
         //投注
         name: "Betting",
         components: {
             BottomTab,
-            VEmojiPicker,
+            VEmojiPicker
             // Emoji,
         },
         props: {
@@ -111,24 +99,18 @@
             return {
                 text: '',
                 hbTouxiang: '',
-                red_name: '',
                 emoji: false,
                 hbName: '',
                 pack: packData.slice(0, 100),
                 // pack: packData,
-                message: [],//消息记录
+                message: [],
                 hbVisible: false,
-                timeVisible: false,//开奖时间
-                timeSrc: '',
-                people: '',
                 websock: null,
                 reconnectData: null,
                 lockReconnect: false,    //避免重复连接，因为onerror之后会立即触发 onclose
                 timeout: 1000 * 10,          //10s一次心跳检测
                 timeoutObj: null,
                 serverTimeoutObj: null,
-                red_count_code:'',
-                red_count_num: '',
             }
         },
         beforeRouteEnter(to, from, next) {
@@ -138,7 +120,7 @@
             next()
         },
         created() {
-            this.hbVisible = false;
+
             this.initWebSocket();
             if (cc.getSession('message')) {
                 this.message = cc.getSession('message');
@@ -223,14 +205,16 @@
                         'type': 'pong'
                     };
                     this.websock.send(JSON.stringify(obj));
-                } else if (res.type === 'login') {
+                }
+                if (res.type === 'login') {
 
-                } else if (res.type === 'say') {
+                }
+                if (res.type === 'say') {
                     let obj = {
-                        name: res.from_client_name,
+                        username: res.from_client_name,
                         text: res.content,
                         face: res.face,
-                        type: this.$store.state.token === res.token ? 1 : 2,
+                        type: this.$store.state.token == res.token ? 1 : 2,
                     };
                     this.message.push(obj);
                     if (this.message.length > 100) {//聊天最多100条
@@ -238,44 +222,6 @@
                     }
                     cc.setSession('message', this.message);//数据同步到缓存
                     this.topTop();
-                } else if (res.type === 'send_red_bags_img') {
-                    let _this = this;
-                    var show = () => {
-                        this.timeVisible = true;
-                        setTimeout(function () {
-                            // _this.timeVisible=false
-                        }, 2000)
-                    };
-                    switch (res.ident) {
-                        case 1:
-                            this.timeSrc = require('../assets/img/ident_1.png');
-                            show();
-                            break;
-                        case 2:
-                            this.timeSrc = require('../assets/img/ident_2.png');
-                            show();
-                            break;
-                        case 3:
-                            this.timeSrc = require('../assets/img/ident_3.png');
-                            show();
-                            break;
-                        case 4:
-                            let obj = {
-                                name: res.red_name,
-                                face: res.face,
-                                type: 3,
-                                people: res.data.people,
-                                red_name: res.data.red_name,
-                                red_count_code:res.data.red_count_code,
-                                red_count_num:res.data.red_count_num
-                            };
-                            this.message.push(obj);
-                            if (this.message.length > 100) {//聊天最多100条
-                                this.message.shift();
-                            }
-                            cc.setSession('message', this.message);//数据同步到缓存
-                            this.topTop();
-                    }
                 }
                 // this.heatBeat();      //收到消息会刷新心跳检测，如果一直收到消息，就推迟心跳发送
             },//数据接收
@@ -310,7 +256,7 @@
                 if (this.text !== '') {
                     let obj = {
                         'type': 'say',
-                        'from_client_name': this.$store.state.name,
+                        'from_client_name': this.$store.state.username,
                         'to_client_id': 'all',
                         'content': this.text,
                         'time': this.curentTime(new Date()),
@@ -321,13 +267,13 @@
                     this.text = '';
                 }
             },//发送消息
-            openHongbao(src, people, red_name,red_count_code,red_count_num) {
+            openHongbao(face,people,red_name,red_count_code,red_count_num) {
                 this.hbVisible = true;
-                this.hbTouxiang = src;
-                this.people = people;
-                this.red_name = red_name;
+                this.hbTouxiang = face;
+                this.hbName = red_name;
+                this.people=people;
                 this.red_count_code=red_count_code;
-                this.red_count_num=red_count_num
+                this.red_count_num=red_count_num;
             },//第一次点开红包
             selectEmoji(emoji) {
                 this.text += (emoji.emoji);
@@ -406,24 +352,6 @@
         background-color: rgb(237, 237, 237);
         transition: all .1s linear;
 
-        .time{
-            width: 200px;
-            margin: 0 auto;
-            top: 200px;
-        }
-        .time-box {
-            width: 200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            /*padding-top: 100px;*/
-
-            img {
-                width: 200px;
-                height: 200px;
-            }
-        }
-
         .last-box {
             margin-bottom: 100px;
         }
@@ -454,7 +382,6 @@
                     border-radius: 10px;
                     overflow: hidden;
                     margin-right: 50px;
-
                     img {
                         width: 100%;
                     }
@@ -587,6 +514,7 @@
                 display: flex;
 
                 .hongbao-box {
+
                     width: 220*2px;
                     /*background-color: #2c3e50;*/
                     margin-left: 30px;
