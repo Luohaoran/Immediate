@@ -10,7 +10,7 @@
                         <div class="user-name">
                             <div class="title">昵称</div>
                             ：
-                            <div class="text">{{username}}</div>
+                            <div class="text">{{name}}</div>
                         </div>
                         <div class="user-id">
                             <div class="title">游戏ID</div>
@@ -26,8 +26,7 @@
                     </div>
                 </div>
                 <div class="bottom">
-                    <button class="on"
-                    >充值
+                    <button class="on" @click="goFinance()">充值
                     </button>
                     <button @click="goPut()">提现</button>
                 </div>
@@ -98,8 +97,8 @@
         },
         data() {
             return {
-                face: this.$store.state.face ||'',
-                username: this.$store.state.username || '',
+                face: this.$store.state.face || '',
+                name: this.$store.state.name || '',
                 money: this.$store.state.money || '',
                 id: this.$store.state.id || '',
                 itemList: [
@@ -133,11 +132,11 @@
             next(vm => {
                 if (!cc.getLocal('token')) {
                     if (vm.$route.query.token) {
-                        vm.$store.commit('setToken',vm.$route.query.token);
-                        vm.$store.commit('setUsername',vm.$route.query.name);
-                        vm.username=vm.$route.query.name;
-                        vm.$store.commit('setFace',`${vm.$route.query.face}`);
-                        vm.face=`${vm.$route.query.face}`;
+                        vm.$store.commit('setToken', vm.$route.query.token);
+                        vm.$store.commit('setName', vm.$route.query.name);
+                        vm.name = vm.$route.query.name;
+                        vm.$store.commit('setFace', vm.$route.query.face);
+                        vm.face = vm.$route.query.face;
                     } else {
                         window.location.href = `http://192.168.8.118:82/api/wx/cookie`;//后端设置cookie
                     }
@@ -148,21 +147,19 @@
             next()
         },
         created() {
-            if (!cc.getLocal('id')){
-                this.getCenter();
-            }
+            this.getCenter();
         },
         mounted() {
 
         },
         methods: {
-            getCenter(){
+            getCenter() {
                 this.$api.center().then(res => {
                     if (res.error_code === 1) {
-                        // this.user_img = res.result.face;
                         this.$store.commit('setId', res.result.id);
-                        this.$store.commit('setUsername', res.result.username);
+                        this.id = res.result.id;
                         this.$store.commit('setMoney', res.result.money);
+                        this.money = res.result.money;
                     } else {
                         this.$utils.Msg(res.msg)
                     }
@@ -170,6 +167,9 @@
             },
             goPut() {
                 this.$router.push('/Put')
+            },
+            goFinance(){
+                this.$router.push('/Finance')
             },
             go(url) {
                 this.$router.push(url)

@@ -21,14 +21,15 @@
                             {{item.text}}
                         </div>
                     </div>
-                    <div class="hongbao-box" v-if="item.type===3" @click="openHongbao(item.face,item.username)">
+                    <div class="hongbao-box" v-if="item.type===3"
+                         @click="openHongbao(item.face,item.people,item.red_name,item.red_count_code,item.red_count_num)">
                         <div class="hongbao-top">
 
                             <img src="../assets/img/hongbao.png" alt="">
                             <div>恭喜发财 大吉大利</div>
                         </div>
                         <div class="hongbao-bottom">
-                            <div>xx红包</div>
+                            <div>{{item.red_name}}的红包</div>
                         </div>
                     </div>
                 </div>
@@ -39,11 +40,20 @@
                         <div class="img">
                             <img :src="hbTouxiang" alt="">
                         </div>
-                        <div class="title-text">{{hbName}} 的红包</div>
+                        <div class="title-text">{{red_name}} 的红包</div>
                     </div>
                     <div class="hongbao-open">
                         <div class="img" @click="kaiHongbao()"></div>
                     </div>
+                </div>
+            </van-popup>
+            <van-popup
+                    v-model="timeVisible"
+                    :overlay="false"
+                    class="time"
+            >
+                <div class="time-box">
+                    <img :src="timeSrc" alt="">
                 </div>
             </van-popup>
         </div>
@@ -69,7 +79,6 @@
                 </div>
             </div>
         </div>
-
         <bottom-tab/>
     </div>
 </template>
@@ -80,12 +89,16 @@
     import packData from 'v-emoji-picker/data/emojis.json';
     import cc from "../assets/js/cc";
 
+
+    // 注册 Lazyload 组件
+
+
     export default {
         //投注
         name: "Betting",
         components: {
             BottomTab,
-            VEmojiPicker
+            VEmojiPicker,
             // Emoji,
         },
         props: {
@@ -98,82 +111,24 @@
             return {
                 text: '',
                 hbTouxiang: '',
+                red_name: '',
                 emoji: false,
                 hbName: '',
                 pack: packData.slice(0, 100),
                 // pack: packData,
-                message: [
-                    //type 1是自己 2是别人 3是红包
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
-                    //     type: 1,
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊',
-                    //     type: 2,
-                    //     time: '22:22',
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊',
-                    //     type: 1,
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    //     time: '22:22',
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊',
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    //     type: 2,
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊',
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    //     type: 1
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
-                    //     type: 3,
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊',
-                    //     type: 3,
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊',
-                    //     type: 3,
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊',
-                    //     type: 3,
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    // },
-                    // {
-                    //     username: '小红',
-                    //     text: '你好啊',
-                    //     type: 3,
-                    //     touxiang: require('../assets/img/touxiang.png'),
-                    // }
-                ],
+                message: [],//消息记录
                 hbVisible: false,
+                timeVisible: false,//开奖时间
+                timeSrc: '',
+                people: '',
                 websock: null,
                 reconnectData: null,
                 lockReconnect: false,    //避免重复连接，因为onerror之后会立即触发 onclose
                 timeout: 1000 * 10,          //10s一次心跳检测
                 timeoutObj: null,
                 serverTimeoutObj: null,
+                red_count_code:'',
+                red_count_num: '',
             }
         },
         beforeRouteEnter(to, from, next) {
@@ -183,8 +138,7 @@
             next()
         },
         created() {
-            console.log(true ? (true ? (1) : (2)) : (3));
-
+            this.hbVisible = false;
             this.initWebSocket();
             if (cc.getSession('message')) {
                 this.message = cc.getSession('message');
@@ -235,7 +189,7 @@
             },
             initWebSocket() {
                 console.log('启动中');
-                let wsurl = 'ws://192.168.8.118:7272';
+                let wsurl = 'ws://47.244.228.229:7272';
                 this.websock = new WebSocket(wsurl);
                 this.websock.onopen = this.wsOpen;          //连接成功
                 this.websock.onmessage = this.wsMessage;    //广播成功
@@ -269,16 +223,14 @@
                         'type': 'pong'
                     };
                     this.websock.send(JSON.stringify(obj));
-                }
-                if (res.type === 'login') {
+                } else if (res.type === 'login') {
 
-                }
-                if (res.type === 'say') {
+                } else if (res.type === 'say') {
                     let obj = {
-                        username: res.from_client_name,
+                        name: res.from_client_name,
                         text: res.content,
                         face: res.face,
-                        type: this.$store.state.token == res.token ? 1 : 2,
+                        type: this.$store.state.token === res.token ? 1 : 2,
                     };
                     this.message.push(obj);
                     if (this.message.length > 100) {//聊天最多100条
@@ -286,6 +238,44 @@
                     }
                     cc.setSession('message', this.message);//数据同步到缓存
                     this.topTop();
+                } else if (res.type === 'send_red_bags_img') {
+                    let _this = this;
+                    var show = () => {
+                        this.timeVisible = true;
+                        setTimeout(function () {
+                            // _this.timeVisible=false
+                        }, 2000)
+                    };
+                    switch (res.ident) {
+                        case 1:
+                            this.timeSrc = require('../assets/img/ident_1.png');
+                            show();
+                            break;
+                        case 2:
+                            this.timeSrc = require('../assets/img/ident_2.png');
+                            show();
+                            break;
+                        case 3:
+                            this.timeSrc = require('../assets/img/ident_3.png');
+                            show();
+                            break;
+                        case 4:
+                            let obj = {
+                                name: res.red_name,
+                                face: res.face,
+                                type: 3,
+                                people: res.data.people,
+                                red_name: res.data.red_name,
+                                red_count_code:res.data.red_count_code,
+                                red_count_num:res.data.red_count_num
+                            };
+                            this.message.push(obj);
+                            if (this.message.length > 100) {//聊天最多100条
+                                this.message.shift();
+                            }
+                            cc.setSession('message', this.message);//数据同步到缓存
+                            this.topTop();
+                    }
                 }
                 // this.heatBeat();      //收到消息会刷新心跳检测，如果一直收到消息，就推迟心跳发送
             },//数据接收
@@ -320,8 +310,7 @@
                 if (this.text !== '') {
                     let obj = {
                         'type': 'say',
-                        'from_client_id': '7f00000108ff00000001',
-                        'from_client_name': this.$store.state.username,
+                        'from_client_name': this.$store.state.name,
                         'to_client_id': 'all',
                         'content': this.text,
                         'time': this.curentTime(new Date()),
@@ -332,10 +321,13 @@
                     this.text = '';
                 }
             },//发送消息
-            openHongbao(src, name) {
+            openHongbao(src, people, red_name,red_count_code,red_count_num) {
                 this.hbVisible = true;
                 this.hbTouxiang = src;
-                this.hbName = name;
+                this.people = people;
+                this.red_name = red_name;
+                this.red_count_code=red_count_code;
+                this.red_count_num=red_count_num
             },//第一次点开红包
             selectEmoji(emoji) {
                 this.text += (emoji.emoji);
@@ -345,9 +337,13 @@
                 $('.img').removeClass("xuanzhuan").addClass("xuanzhuan").one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
                     $('.img').removeClass("xuanzhuan");//动画效果设置
                     _this.$router.push({
-                        name: '/Hongbao_record', params: {
-                            src: _this.hbTouxiang,
-                            name: _this.hbName
+                        name: '/Hongbao_record',
+                        params: {
+                            src: _this.hbTouxiang,//头像
+                            people: _this.people,//红包人数
+                            red_name: _this.red_name,//名字
+                            red_count_code:_this.red_count_code,//总额
+                            red_count_num:_this.red_count_num,//个数
                         }
                     })
                 });
@@ -409,6 +405,24 @@
         overflow: auto;
         background-color: rgb(237, 237, 237);
         transition: all .1s linear;
+
+        .time{
+            width: 200px;
+            margin: 0 auto;
+            top: 200px;
+        }
+        .time-box {
+            width: 200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            /*padding-top: 100px;*/
+
+            img {
+                width: 200px;
+                height: 200px;
+            }
+        }
 
         .last-box {
             margin-bottom: 100px;
@@ -573,12 +587,11 @@
                 display: flex;
 
                 .hongbao-box {
-
                     width: 220*2px;
                     /*background-color: #2c3e50;*/
                     margin-left: 30px;
                     padding: 0;
-                    padding-top: 50px;
+                    /*padding-top: 50px;*/
                     height: 70*2px;
                     display: flex;
                     flex-wrap: wrap;

@@ -14,7 +14,7 @@
                 </div>
                 <div class="hongbao-jine">
                     <div class="hongbao-jine-top">
-                        <span class="jine">1.00</span>
+                        <span class="jine">{{red_count_code}}</span>
                         <span class="yuan">元</span>
                     </div>
                     <div class="hongbao-jine-bottom">
@@ -23,20 +23,20 @@
 
                 </div>
             </div>
-            <div class="hongba-time">20个红包1小时内领取完毕</div>
+            <div class="hongba-time">{{red_count_num}}个红包2分钟内领取完毕</div>
             <div class="hongbao-list">
-                <div class="hongbao-item" v-for="n in 10" :key="n">
+                <div class="hongbao-item" v-for="(item,index) in people" :key="index">
                     <div class="hongbao-item-left">
                         <div class="hongbao-item-left-img">
-                            <img src="../assets/img/touxiang.png" alt="">
+                            <img :src="item.face" alt="">
                         </div>
                         <div class="hongbao-item-left-text">
-                            <div class="name">你的味道</div>
-                            <div class="time">06-20 15:24</div>
+                            <div class="name">{{item.name}}</div>
+                            <div class="time">{{item.time}}</div>
                         </div>
                     </div>
                     <div class="hongbao-item-right">
-                        <span>￥0.04</span>
+                        <span>￥{{item.code}}</span>
                     </div>
                 </div>
             </div>
@@ -51,12 +51,14 @@
         components: {},
         data() {
             return {
-                hbName:'',
-                hbTouxiang:''
+                hbName: '',
+                hbTouxiang: '',
+                people: '',
+                red_count_code: '',
+                red_count_num: '',
+
             }
         },
-
-
         beforeRouteEnter(to, from, next) {
             next()
         },
@@ -64,36 +66,36 @@
             next()
         },
         created() {
-            this.hbName=this.$route.params.name;
-            this.hbTouxiang=this.$route.params.src;
-
+            this.hbName = this.$route.params.red_name;
+            this.hbTouxiang = this.$route.params.src;
+            this.people = this.$route.params.people;
+            this.red_count_num = this.$route.params.red_count_num;
+            this.red_count_code = this.$route.params.red_count_code;
         },
         mounted() {
-
         },
         methods: {
-            bank(){
+            bank() {
                 this.$router.go(-1)
             }
         },
-
     }
-
 </script>
 
 <style scoped lang="less">
-    .top{
+    .top {
         height: 8vh;
-        background-color: rgb(242,84,66);
+        background-color: rgb(242, 84, 66);
         width: 94%;
         padding: 0 3%;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        color:#fff8c3 ;
+        color: #fff8c3;
     }
-    .content{
-        .hb_name{
+
+    .content {
+        .hb_name {
             width: 100%;
             height: 45%;
             background: url("../assets/img/hb_record_bg.png") no-repeat;
@@ -121,28 +123,32 @@
                         width: 100%;
                     }
                 }
-
             }
-            .hongbao-jine{
+
+            .hongbao-jine {
                 display: flex;
                 /*justify-content: center;*/
                 flex-wrap: wrap;
                 width: 100%;
                 color: rgb(255, 223, 175);
-                .hongbao-jine-top,.hongbao-jine-bottom{
-                    .jine{
+
+                .hongbao-jine-top, .hongbao-jine-bottom {
+                    .jine {
                         font-size: 60px;
                     }
+
                     width: 100%;
                     text-align: center;
                 }
             }
         }
-        .hongba-time{
+
+        .hongba-time {
             text-align: center;
             height: 5%;
         }
-        .hongbao-list{
+
+        .hongbao-list {
             height: 50%;
             width: 100%;
             border-top: 1px solid #eeeeee;
@@ -150,16 +156,20 @@
             flex-wrap: wrap;
             overflow-y: scroll;
             flex-direction: row-reverse;
-            .hongbao-item{
+            align-content: flex-start;
+
+            .hongbao-item {
                 height: 109px;
                 width: 95%;
                 border-bottom: 1px solid #eeeeee;
                 display: flex;
                 justify-content: space-between;
-                .hongbao-item-left{
+
+                .hongbao-item-left {
                     display: flex;
                     align-items: center;
-                    .hongbao-item-left-img{
+
+                    .hongbao-item-left-img {
                         width: 66px;
                         height: 66px;
                         border-radius: 15px;
@@ -168,31 +178,33 @@
                         justify-content: center;
                         overflow: hidden;
                         margin-right: 20px;
-                        img{
+
+                        img {
                             width: 60px;
                             height: 60px;
                         }
                     }
-                    .hongbao-item-left-text{
-                        font-size: 28px;
-                        .name{
 
+                    .hongbao-item-left-text {
+                        font-size: 28px;
+
+                        .name {
                         }
-                        .time{
+
+                        .time {
                             color: #999999;
                         }
-
                     }
                 }
-                .hongbao-item-right{
+
+                .hongbao-item-right {
                     display: flex;
                     align-items: center;
                     padding-right: 10px;
                     font-size: 28px;
-
                 }
             }
         }
     }
-
 </style>
+
